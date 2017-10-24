@@ -9,9 +9,13 @@ display_line(L, N):-
     write(N), put_char(' '), 
     put_char('|'), display_line(L).
 
+translate_char(0,'.').
+translate_char(1,'X').
+translate_char(2,'O').
+
 %ultimo elemento da linha
-display_line([X]) :- write(X), write('|'), put_code(10). 
-display_line([X|R]) :- write(X), write(' '), display_line(R).
+display_line([X]) :- translate_char(X,N), write(N), write('|'), put_code(10). 
+display_line([X|R]) :- translate_char(X,N), write(N), write(' '), display_line(R).
 
 display_top :- write('   1 2 3 4 5 6 7'), put_code(10).
 display_edge :- write('  +-------------+'), put_code(10).
