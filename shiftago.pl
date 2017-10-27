@@ -1,6 +1,9 @@
 :-use_module(library(lists)).
 :-include('display.pl').
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%  UTILS  %%%%%%%%%%%%%%%%%%%%%%%%%
+
 %TODO arranjar isto
 sublist(L1,L):- append(L1,_,L).
 sublist(L1,L):- append(_,L1,L).
@@ -11,12 +14,21 @@ init([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0
 get_line(N, Board, Line):-
     nth1(N, Board, Line).
 
+%%%%% ----------------------------------------------- %%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%  JOGADAS  %%%%%%%%%%%%%%%%%%%%%%%%
 possible_move(Line):-
     member(0, Line).
 
-%%%%%%%%%%%%%%%%%%%%%%%  JOGADAS  %%%%%%%%%%%%%%%%%%%%%%%%
+insert_head_line(Player,Line,NLine):-
+    remove_first_zero(Line,_temp), append([Player],_temp,NLine).
 
+insert_end_line(Player,Line,NLine):-
+    remove_last_zero(Line,_temp), append(_temp,[Player],NLine).
 
+%TODO remove_first_zero(Line, NLine) e remove_last_zero(Line, NLine) (o cut deve ajudar)
 
 %%%%% ---------------------------------------------- %%%%%
 
