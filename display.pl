@@ -20,9 +20,6 @@ display_options:-
 display_main_menu:-
     display_title, nl, display_options, nl.
 
-
-
-
 %------------------ Imprimir tabuleiro ------------------%
 display_matrix(8, []).
 display_matrix(N, [L|T]) :- 

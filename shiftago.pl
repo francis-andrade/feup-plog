@@ -10,8 +10,8 @@
 %menu principal
 %ler input do utilizador
 %comecar jogo (pessoa vs pessoa, pessoa vs pc, pc vs pc)
-%loop do jogo
-%voltar ao menu principal
+%TODO loop do jogo
+%TODO voltar ao menu principal
 
 
 
@@ -23,9 +23,12 @@ menu_option(1):- player_vs_player.
 menu_optiom(2):- player_vs_cpu.
 menu_option(3):- cpu_vs_cpu.
 
-player_vs_player:-write('chose pvp'), nl.
-player_vs_cpu:-write('chose pvc'), nl.
-cpu_vs_cpu:-write('chose cvc'), nl.
 
-init([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0]]).
+init([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0]], 22, 22).
+player_vs_player:-
+    init(Board),
+    display_board(Board, PlayerOnePieces, PlayerTwoPieces),
+    insert_piece(Board,Edge,N,1,NewBoardOut,PlayerOnePieces, PlayerTwoPieces).
 
+player_vs_cpu.%TODO
+cpu_vs_cpu.%TODO

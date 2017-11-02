@@ -12,5 +12,5 @@ get_integer(Prompt, Min, Max, Option):-
     Option >= Min, Option =< Max.
 
 get_integer(Prompt, Min, Max, Option):-
-    write('Wrong input; Try again.'), nl, get_integer(Prompt, Min, Max, Option).
+    write('Invalid input; Try again.'), nl, get_integer(Prompt, Min, Max, Option).
 
