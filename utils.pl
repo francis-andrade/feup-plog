@@ -1,6 +1,14 @@
 :-use_module(library(lists)).
 
-sublist(L1,L):- append(_x,L1,L2), !, append(L2,_z,L).
+%sublist(L1,L):- append(_x,L1,L2), append(L2,_z,L).
+
+sublist_start([],L).
+
+sublist_start(L1, L):- L1=[X | L12], L=[X | L2], sublist_start(L12 , L2).
+
+sublist(L1, L) :- sublist_start(L1, L).
+
+sublist(L1,L) :- L=[X | L2], sublist(L1 , L2).
 
 get_line(N, Board, Line):-
     nth1(N, Board, Line).
