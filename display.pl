@@ -14,26 +14,14 @@ display_options:-
     write('  1. Player vs Player'), nl,
     write('  2. Player vs COM'), nl,
     write('  3. COM vs COM'), nl,
-    write('  0. Exit'), nl.
+    write('  0. Exit'), nl,
+    write('+------------------------------------+').    
 
 display_main_menu:-
     display_title, nl, display_options, nl.
 
 
-get_input(Input):-
-    get_char(Ch), get_all_chars(Ch, CharacterList), name(Input, [Ch|CharacterList]).
 
-get_all_chars(10,[]).
-get_all_chars(13,[]).
-get_all_chars(Ch, [Ch|MoreChars]):-
-    get_char(NChar),
-    get_all_chars(NChar, MoreChars).
-
-get_integer(Prompt, Int):-
-    repeat,
-    write(Prompt),
-    once(get_input(Int)),
-    number(Int).
 
 %------------------ Imprimir tabuleiro ------------------%
 display_matrix(8, []).
