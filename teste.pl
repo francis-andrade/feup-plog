@@ -1,1 +1,0 @@
-le_inteiro(Prompt, X):- write(Prompt), nl, read(X).
