@@ -5,10 +5,10 @@ possible_move(Line):-
     member(0, Line).
 
 insert_head_line(Player,Line,NLine):-
-    remove_first_zero(Line,_temp), append([Player],_temp,NLine).
+    append([Player],Line,NLine).
 
 insert_end_line(Player,Line,NLine):-
-    remove_last_zero(Line,_temp), append(_temp,[Player],NLine).
+    append(Line,[Player],NLine).
 	
 remove_first_zero(Line, NLine) :-
 	Line = [0 | Line2],
@@ -29,6 +29,7 @@ remove_last_zero(Line, NLine) :-
 
 
 %------------------- Obtaining player move ------------------%
+get_move(Edge, Row):- get_edge(Edge), get_row(Row).
 
 get_edge(Edge):-
     write('Choose a board edge to insert the piece (up, down, left, right): '), nl,
@@ -58,12 +59,12 @@ insert_piece(Board, right, N, CurrentPlayer, NewBoard, CurrentPieces, OpponentPi
     replace_nth(Board, N, NLine, NewBoard),
     NewCurrentPieces is CurrentPieces - 1.
 
-insert_piece(Board, top, N, CurrentPlayer, NewBoard, CurrentPieces, OpponentPieces, NewCurrentPieces):-
+insert_piece(Board, up, N, CurrentPlayer, NewBoard, CurrentPieces, OpponentPieces, NewCurrentPieces):-
     transpose(Board, _tempInit),
     insert_piece(_tempInit, left, N, CurrentPlayer, _tempEnd, CurrentPieces, OpponentPieces, NewCurrentPieces),
     transpose(_tempEnd, NewBoard).
 
-insert_piece(Board, bottom, N, CurrentPlayer, NewBoard, CurrentPieces, OpponentPieces, NewCurrentPieces):-
+insert_piece(Board, down, N, CurrentPlayer, NewBoard, CurrentPieces, OpponentPieces, NewCurrentPieces):-
     transpose(Board, _tempInit),
     insert_piece(_tempInit, right, N, CurrentPlayer, _tempEnd, CurrentPieces, OpponentPieces, NewCurrentPieces),
     transpose(_tempEnd, NewBoard).
