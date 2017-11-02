@@ -33,10 +33,10 @@ switch_player(2,1).
 
 player_vs_player(Board, CurrentPieces, OpponentPieces, CurrentPlayer):-
     display_board(Board),
-    get_move(Edge, Row),
-    insert_piece(Board, Edge, Row, CurrentPlayer, NewBoard, CurrentPieces, OpponentPieces, NewCurrentPieces),
+    write('Player '), write(CurrentPlayer), write(', it\'s your turn. You have '), write(CurrentPieces), write(' pieces left.'), nl,
+    insert_piece(Board, CurrentPlayer, NewBoard, CurrentPieces, OpponentPieces, NewCurrentPieces),
     !,
-    check_for_win(CurrentPlayer, NewBoard) = fail,
+    %check_for_win(CurrentPlayer, NewBoard) = fail,
     switch_player(CurrentPlayer, NewPlayer),
     player_vs_player(NewBoard, OpponentPieces, NewCurrentPieces, NewPlayer).
 

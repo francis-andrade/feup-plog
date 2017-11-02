@@ -1,5 +1,6 @@
-%-------------------- Auxiliar predicates -------------------%
 :-use_module(library(lists)).
+
+%-------------------- Auxiliar predicates -------------------%
 
 possible_move(Line):-
     member(0, Line).
@@ -29,7 +30,10 @@ remove_last_zero(Line, NLine) :-
 
 
 %------------------- Obtaining player move ------------------%
-get_move(Edge, Row):- get_edge(Edge), get_row(Row).
+get_move(Edge, Row):- 
+	repeat,
+		get_edge(Edge),
+		get_row(Row).
 
 get_edge(Edge):-
     write('Choose a board edge to insert the piece (up, down, left, right): '), nl,
@@ -44,6 +48,9 @@ get_row(Row):-
 
 
 %---------------- Insert piece on board edge ----------------%
+insert_piece(Board, CurrentPlayer, NewBoard, CurrentPieces, OpponentPieces, NewCurrentPieces):-
+	get_move(Edge, Row),
+	insert_piece(Board, Edge, Row, CurrentPlayer, NewBoard, CurrentPieces, OpponentPieces, NewCurrentPieces).	
 
 insert_piece(Board, left, N, CurrentPlayer, NewBoard, CurrentPieces, OpponentPieces, NewCurrentPieces):-
     CurrentPieces > 0,
