@@ -31,9 +31,8 @@ remove_last_zero(Line, NLine) :-
 
 %------------------- Obtaining player move ------------------%
 get_move(Edge, Row):- 
-	repeat,
-		get_edge(Edge),
-		get_row(Row).
+    repeat,
+        once(get_edge(Edge)), once(get_row(Row)).
 
 get_edge(Edge):-
     write('Choose a board edge to insert the piece (up, down, left, right): '), nl,

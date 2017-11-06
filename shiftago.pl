@@ -35,10 +35,18 @@ player_vs_player(Board, CurrentPieces, OpponentPieces, CurrentPlayer):-
     display_board(Board),
     write('Player '), write(CurrentPlayer), write(', it\'s your turn. You have '), write(CurrentPieces), write(' pieces left.'), nl,
     insert_piece(Board, CurrentPlayer, NewBoard, CurrentPieces, OpponentPieces, NewCurrentPieces),
-    !,
-    %check_for_win(CurrentPlayer, NewBoard) = fail,
+    end_move(CurrentPlayer, NewBoard, OpponentPieces, NewCurrentPieces, NewPlayer).
+
+end_move(CurrentPlayer, NewBoard, OpponentPieces, NewCurrentPieces, NewPlayer):-
+    check_for_win(CurrentPlayer, NewBoard),
+    end_game(CurrentPlayer).
+
+end_move(CurrentPlayer, NewBoard, OpponentPieces, NewCurrentPieces, NewPlayer):-
     switch_player(CurrentPlayer, NewPlayer),
     player_vs_player(NewBoard, OpponentPieces, NewCurrentPieces, NewPlayer).
+
+end_game(Player):-
+    write("Game over, winner is "), write(Player), write("!"), nl.
 
 
 %----------------------- Player vs CPU -----------------------%
