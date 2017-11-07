@@ -3,6 +3,7 @@
 check_for_win(Player, Board):- check_lines(Player,Board).
 check_for_win(Player, Board):- check_colums(Player, Board).
 check_for_win(Player, Board):- check_diagonals(Player, Board).
+check_for_win(Player, Board):- reverse(Board, NBoard), check_diagonals(Player, NBoard).
 
 check_lines(Player, [X|Rest]):- sublist([Player,Player,Player,Player,Player], X).
 check_lines(Player, [_|Rest]):- check_lines(Player, Rest).
