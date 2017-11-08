@@ -2,15 +2,19 @@
 
 %-------------------- Auxiliar predicates -------------------%
 
+%checks if a move is possible
 possible_move(Line):-
     member(0, Line).
 
+%inserts piece at the beginning of a line
 insert_head_line(Player,Line,NLine):-
     append([Player],Line,NLine).
 
+%inserts piece at the end of a line
 insert_end_line(Player,Line,NLine):-
     append(Line,[Player],NLine).
-	
+
+%removes the first zero in a line
 remove_first_zero(Line, NLine) :-
 	Line = [0 | Line2],
 	NLine = Line2.
@@ -23,17 +27,20 @@ remove_first_zero(Line, NLine) :-
 
 remove_first_zero([],[]).
 
-remove_last_zero(Line, NLine) :- 
-	reverse(Line, Line2),
-	remove_first_zero(Line2, NLine2),
-	reverse(NLine2, NLine).
+%removes the last zero in a line
+remove_last_zero(Line, NLine) :-
+	reverse(Line, _Line2),
+	remove_first_zero(_Line2, _NLine2),
+	reverse(_NLine2, NLine).
 
 
 %------------------- Obtaining player move ------------------%
-get_move(Edge, Row):- 
+%asks the player for their move (board edge and line/column)
+get_move(Edge, Row):-
     repeat,
         once(get_edge(Edge)), once(get_row(Row)).
 
+%gets the edge
 get_edge(Edge):-
     write('Choose a board edge to insert the piece (up, down, left, right): '), nl,
     read(Edge), member(Edge,['up', 'down', 'left', 'right']).
@@ -42,24 +49,24 @@ get_edge(Edge):-
     write('Invalid input; Try again.'), nl,
     get_edge(Edge).
 
+%gets the row
 get_row(Row):-
     get_integer('Choose a row: ', 1, 7,Row).
 
 
 %---------------- Insert piece on board edge ----------------%
+%inserts a piece in the board (predicate called by the main game predicate)
 insert_piece(Board, CurrentPlayer, NewBoard, CurrentPieces, OpponentPieces, NewCurrentPieces):-
 	get_move(Edge, Row),
-	insert_piece(Board, Edge, Row, CurrentPlayer, NewBoard, CurrentPieces, OpponentPieces, NewCurrentPieces).	
+	insert_piece(Board, Edge, Row, CurrentPlayer, NewBoard, CurrentPieces, OpponentPieces, NewCurrentPieces).
 
 insert_piece(Board, left, N, CurrentPlayer, NewBoard, CurrentPieces, OpponentPieces, NewCurrentPieces):-
-    CurrentPieces > 0,
     get_line(N, Board, Line), possible_move(Line),
     remove_first_zero(Line, _line), insert_head_line(CurrentPlayer, _line, NLine),
     replace_nth(Board, N, NLine, NewBoard),
     NewCurrentPieces is CurrentPieces - 1.
 
 insert_piece(Board, right, N, CurrentPlayer, NewBoard, CurrentPieces, OpponentPieces, NewCurrentPieces):-
-    CurrentPieces > 0,
     get_line(N, Board, Line), possible_move(Line),
     remove_last_zero(Line, _line), insert_end_line(CurrentPlayer, _line, NLine),
     replace_nth(Board, N, NLine, NewBoard),

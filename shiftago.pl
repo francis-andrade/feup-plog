@@ -33,6 +33,11 @@ init([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0
 switch_player(1,2).
 switch_player(2,1).
 
+%checks if the player wants to leave the game
+return_to_main_menu(no).
+return_to_main_menu(yes):-
+    shiftago.
+
 
 %---------------------- Player vs Player ---------------------%
 
@@ -43,11 +48,6 @@ player_vs_player(Board, CurrentPieces, OpponentPieces, CurrentPlayer):-
     insert_piece(Board, CurrentPlayer, NewBoard, CurrentPieces, OpponentPieces, NewCurrentPieces),
     end_move(CurrentPlayer, NewBoard, OpponentPieces, NewCurrentPieces).
 
-%checks if the player wants to leave the game
-return_to_main_menu(no).
-return_to_main_menu(yes):-
-    shiftago.
-
 %writes the number of pieces
 write_pieces(Player, 1):-
     write('Player '), write(Player),
@@ -57,8 +57,6 @@ write_pieces(Player, Pieces):-
     write('Player '), write(Player),
     write(', it\'s your turn. You have '),
     write(Pieces), write(' pieces left.'), nl.
-
-
 
 %----------------------- Player vs CPU -----------------------%
 player_vs_cpu.%TODO
