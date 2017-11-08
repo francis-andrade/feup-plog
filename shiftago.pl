@@ -6,54 +6,56 @@
 
 
 %--------------------- Loop geral do jogo --------------------%
-%menu principal
-%ler input do utilizador
-%comecar jogo (pessoa vs pessoa, pessoa vs pc, pc vs pc)
-%loop do jogo
-%TODO voltar ao menu principal
-%/home/daniel/.git/PLOG1718-Shiftago4/shiftago.pl
-
-
-
+%main game function
 shiftago:-
     display_main_menu,
-    get_integer('Please choose an option: ', 0, 3, GameOption), 
+    get_integer('Please choose an option: ', 0, 3, GameOption),
     menu_option(GameOption).
 
+%exits game
 menu_option(0).
-menu_option(1):- 
-    init(Board, PlayerOnePieces, PlayerTwoPieces), 
+
+%starts player vs player
+menu_option(1):-
+    init(Board, PlayerOnePieces, PlayerTwoPieces),
     player_vs_player(Board, PlayerOnePieces, PlayerTwoPieces, 1).
+
+%starts player vs ai
 menu_option(2):- player_vs_cpu.
+
+%starts ai vs ai
 menu_option(3):- cpu_vs_cpu.
 
-%init([[0,1,2,0,0,0,0],[0,1,2,0,0,0,0],[0,1,2,0,0,0,0],[0,1,2,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0]], 18, 18).
+%creates a blank board
 init([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0]], 22, 22).
 
+%switches the two players
 switch_player(1,2).
 switch_player(2,1).
 
 
 %---------------------- Player vs Player ---------------------%
 
+%shows the board, asks for the pieces, makes the move and then ends the current
 player_vs_player(Board, CurrentPieces, OpponentPieces, CurrentPlayer):-
     display_board(Board),
     write_pieces(CurrentPlayer, CurrentPieces),
     insert_piece(Board, CurrentPlayer, NewBoard, CurrentPieces, OpponentPieces, NewCurrentPieces),
     end_move(CurrentPlayer, NewBoard, OpponentPieces, NewCurrentPieces).
 
-
+%checks if the player wants to leave the game
 return_to_main_menu(no).
 return_to_main_menu(yes):-
     shiftago.
 
+%writes the number of pieces
 write_pieces(Player, 1):-
-    write('Player '), write(Player), 
+    write('Player '), write(Player),
     write(', it\'s your turn. You only have one piece left, make it count!'), nl.
 
 write_pieces(Player, Pieces):-
-    write('Player '), write(Player), 
-    write(', it\'s your turn. You have '), 
+    write('Player '), write(Player),
+    write(', it\'s your turn. You have '),
     write(Pieces), write(' pieces left.'), nl.
 
 
