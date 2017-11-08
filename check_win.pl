@@ -1,5 +1,8 @@
 %---------------- Verificacao de Fim de Jogo ---------------%
 
+check_for_win(Pieces, Player, Board):-
+	Pieces =< 17, check_for_win(Player, Board), display_board(Board).
+	
 check_for_win(Player, Board):- check_lines(Player,Board).
 check_for_win(Player, Board):- check_colums(Player, Board).
 check_for_win(Player, Board):- check_diagonals(Player, Board).

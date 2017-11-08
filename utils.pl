@@ -27,3 +27,7 @@ get_integer(Prompt, Min, Max, Option):-
 get_integer(Prompt, Min, Max, Option):-
     write('Invalid input; Try again.'), nl, get_integer(Prompt, Min, Max, Option).
 
+get_boolean(Prompt, Option):-
+	write(Prompt), nl,
+	read(Option), member(Option, ['yes', 'no']).
+
