@@ -1,6 +1,5 @@
 :-use_module(library(lists)).
 
-%sublist(L1,L):- append(_x,L1,L2), append(L2,_z,L).
 
 sublist_start([],L).
 
