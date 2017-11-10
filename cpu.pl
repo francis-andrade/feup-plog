@@ -9,29 +9,29 @@ Move is represented by [edge , row]
 :-include('check_win.pl').
 
 
-valid_move(Board, Player,  Move, NewBoard) :- 
-	Move=['left', N],
+valid_move(Board, Player,  ['left', N], NewBoard) :- 
+	
 	N>0, N<8,
 	get_line(N, Board, Line), possible_move(Line),
     remove_first_zero(Line, _line), insert_head_line(Player, _line, NLine),
     replace_nth(Board, N, NLine, NewBoard),!.
 	
-valid_move(Board, Player,  Move, NewBoard) :- 
-	Move=['right', N],
+valid_move(Board, Player,  ['right', N], NewBoard) :- 
+	
 	N>0, N<8,
 	get_line(N, Board, Line), possible_move(Line),
     remove_last_zero(Line, _line), insert_end_line(Player, _line, NLine),
     replace_nth(Board, N, NLine, NewBoard),!.
 
-valid_move(Board, Player,  Move, NewBoard) :- 
-	Move=['up', N],
+valid_move(Board, Player,  ['up', N], NewBoard) :- 
+	
 	N>0, N<8,
 	transpose(Board, Trans_Board),
 	valid_move(Trans_Board, Player, ['left',N], Trans_NewBoard),
 	transpose(Trans_NewBoard,NewBoard),!.
 	
-valid_move(Board, Player,  Move, NewBoard) :- 
-	Move=['down', N],
+valid_move(Board, Player, ['down', N], NewBoard) :- 
+	
 	N>0, N<8,
 	transpose(Board, Trans_Board),
 	valid_move(Trans_Board, Player, ['right',N], Trans_NewBoard),
@@ -41,20 +41,20 @@ valid_move(Board, Player, Move, 0).
 
 
 
-valid_moves_make_list_aux(Board, Player, Move, ListOfMoves_0):-
-	Move=['left', 8],!,
+valid_moves_make_list_aux(Board, Player, ['left', 8], ListOfMoves_0):-
+	!,
 	valid_moves_make_list_aux(Board, Player, ['right',1], ListOfMoves_0).
 
-valid_moves_make_list_aux(Board, Player, Move, ListOfMoves_0):-
-        Move=['right', 8],!,
+valid_moves_make_list_aux(Board, Player, ['right', 8], ListOfMoves_0):-
+        !,
         valid_moves_make_list_aux(Board, Player, ['up',1], ListOfMoves_0).
 
-valid_moves_make_list_aux(Board, Player, Move, ListOfMoves_0):-
-        Move=['up', 8],!,
+valid_moves_make_list_aux(Board, Player, ['up', 8], ListOfMoves_0):-
+        !,
         valid_moves_make_list_aux(Board, Player, ['down',1], ListOfMoves_0).
 
-valid_moves_make_list_aux(Board, Player, Move, ListOfMoves_0):-
-        Move=['down', 8],!,
+valid_moves_make_list_aux(Board, Player, ['down', 8], ListOfMoves_0):-
+        !,
         ListOfMoves_0=[].
 	
 valid_moves_make_list_aux(Board, Player,Move, ListOfMoves_0):-
@@ -86,6 +86,13 @@ cmp_lists(ListOfMoves, ListOfMoves_0):-
 valid_moves(Board, Player, ListOfMoves):-
 	valid_moves_make_list(Board, Player, ListOfMoves_0),
 	cmp_lists(ListOfMoves, ListOfMoves_0).
+
+
+
+%value(Board, Player, Value):-
+	
+
+
 
 display_boards(ListOfBoards):-
         ListOfBoards=[0 | L2],
