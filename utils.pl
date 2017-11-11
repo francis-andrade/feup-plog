@@ -22,6 +22,41 @@ rate_count(Elem, List, N, Count):-
 rate(Elem, List, N):-
     rate_count(Elem, List, N, 0).
 
+rate_adj_count(Elem, [], N, Count, Max_Count, ElemJustAppeared):-
+    (Count > Max_Count, N=Count) ;    
+    ( \+ (Count > Max_Count), N=Max_Count).
+
+rate_adj_count(Elem, List, N, Count, Max_Count, ElemJustAppeared):-
+    List=[X | L2],
+    ElemJustAppeared = 0,
+    X \= Elem,
+    rate_adj_count(Elem, L2, N, 0, Max_Count, 0).  
+
+rate_adj_count(Elem, List, N, Count, Max_Count, ElemJustAppeared):-
+    List=[X | L2],
+    ElemJustAppeared = 0,
+    X = Elem,
+    rate_adj_count(Elem, L2, N, 1, Max_Count, 1).   
+
+rate_adj_count(Elem, List, N, Count, Max_Count, ElemJustAppeared):-
+    List=[X | L2],
+    ElemJustAppeared = 1,
+    X \= Elem,
+    ((Count>Max_Count,
+    rate_adj_count(Elem, L2, N, 0, Count, 0));
+    (\+ (Count>Max_Count),
+    rate_adj_count(Elem, L2, N, 0, Max_Count, 0))).  
+
+rate_adj_count(Elem, List, N, Count, Max_Count, ElemJustAppeared):-
+    List=[X | L2],
+    ElemJustAppeared = 1,
+    X = Elem,
+    C1 is Count + 1,
+    rate_adj_count(Elem, L2, N, C1, Max_Count, 1).  
+
+
+rate_adj(Elem, List, N):-
+        rate_adj_count(Elem, List, N, 0, 0, 0).
 
 max_list_aux([], Position, Value, Position, Value, Ind):- ! .
 
