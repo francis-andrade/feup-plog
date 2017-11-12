@@ -3,6 +3,7 @@
 :-include('utils.pl').
 :-include('make_move.pl').
 :-include('check_win.pl').
+:-include('cpu.pl').
 
 
 %--------------------- Loop geral do jogo --------------------%
@@ -59,7 +60,12 @@ write_pieces(Player, Pieces):-
     write(Pieces), write(' pieces left.'), nl.
 
 %----------------------- Player vs CPU -----------------------%
-player_vs_cpu.%TODO
+player_vs_cpu(Board, CurrentPieces, OpponentPieces, CurrentPlayer, CPUPlayer):-
+    CurrentPlayer=CPUPlayer, !,
+    display_board(Board),
+    cpu_move(Board, CurrentPlayer, Move, NewBoard, CurrentPieces, OpponentPieces, NewCurrentPieces),
+    end_move(CurrentPlayer, NewBoard, OpponentPieces, NewCurrentPieces).
+
 
 %------------------------- CPU vs CPU ------------------------%
 cpu_vs_cpu.%TODO
