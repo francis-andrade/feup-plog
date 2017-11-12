@@ -24,13 +24,13 @@ menu_option(1):-
 
 %starts player vs ai
 menu_option(2):-
-    asserta(game_mode(2)), get_cpu_difficulty,
+    asserta(game_mode(2)), get_cpu_difficulty(Level),
     init(Board, PlayerOnePieces, PlayerTwoPieces),
     player_vs_cpu(Board, PlayerOnePieces, PlayerTwoPieces, 1, 2, Level).
 
 %starts ai vs ai
 menu_option(3):-
-    asserta(game_mode(3)), get_cpu_difficulty,
+    asserta(game_mode(3)), get_cpu_difficulty(Level),
     init(Board, PlayerOnePieces, PlayerTwoPieces),
     cpu_vs_cpu(Board, PlayerOnePieces, PlayerTwoPieces, 1, Level).
 
@@ -46,7 +46,7 @@ return_to_main_menu(no).
 return_to_main_menu(yes):-
     shiftago.
 
-get_cpu_dificulty(Level):-
+get_cpu_difficulty(Level):-
     get_integer('Please choose a difficulty level for the CPU (1,2,3):', 1, 3, Level).
 
 %---------------------- Player vs Player ---------------------%

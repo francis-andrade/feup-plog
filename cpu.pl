@@ -214,20 +214,22 @@ value(Board, Player, Value):-
 
 cpu_move(Level, Board, Player, 'undefined', 'undefined', 0,  0):- write('b'),! . 
 
-cpu_move(3, Board, Player, Move, NewBoard, CurrentPieces,  NewCurrentPieces):-
-	write('b1'),
+cpu_move( Board, Player, Move, NewBoard, CurrentPieces,  NewCurrentPieces):-
+	cpu_level(3),
 	valid_moves_make_list(Board, Player, ListOfMoves), length(ListOfMoves, Size), create_list(Player, Size, ListPlayer),write('b2'),
 	map_redefined( value, ListOfMoves, ListPlayer, Values),write('b3'), max_list(Values, PositionMove, ValueMove), write('b4'),
 	((ValueMove is (0 -10^7), Move='undefined', NewBoard='undefined', NewCurrentPieces=0) ;
 	(ValueMove > (0 -10^7),write('b5'), convert_order_Move(PositionMove, Move),write('b6'), nth1(PositionMove, ListOfMoves, NewBoard), NewCurrentPieces is CurrentPieces - 1)).
 
 cpu_move(2, Board, Player, Move, NewBoard, CurrentPieces,  NewCurrentPieces):-
+	cpu_level(2),
 	valid_moves_make_list(Board, Player, ListOfMoves), length(ListOfMoves, Size), create_list(Player, Size, ListPlayer),
 	map_redefined( max_pieces_adj, ListOfMoves, ListPlayer, Positions, Values), max_list(Values, PositionMove, ValueMove), 
 	((ValueMove is (0 -10^7), Move ='undefined', NewBoard='undefined', NewCurrentPieces=0) ;
 	(ValueMove > (0 -10^7), convert_order_Move(PositionMove, Move), nth1(PositionMove, ListOfMoves, NewBoard), NewCurrentPieces is CurrentPieces - 1)).
 
 cpu_move(1, Board, Player, Move, NewBoard, CurrentPieces,  NewCurrentPieces):-
+	cpu_level(1),
 	valid_moves_make_list(Board, Player, ListOfMoves), length(ListOfMoves, Size), create_list(Player, Size, ListPlayer), random(1, Size, PositionMove), 
 	convert_order_Move(PositionMove, Move), nth1(PositionMove, ListOfMoves, NewBoard), NewCurrentPieces is CurrentPieces - 1.
 	
