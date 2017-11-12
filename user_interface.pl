@@ -51,7 +51,18 @@ display_edge :- write('  +-------------+'), put_code(10).
 display_board(X):- display_top, display_edge, display_matrix(1, X), display_edge.
 
 
+%--------------------- Obter inputs --------------------%
+get_integer(Prompt, Min, Max, Option):-
+    write(Prompt), nl,
+    read(Option), integer(Option),
+    Option >= Min, Option =< Max.
 
+get_integer(Prompt, Min, Max, Option):-
+    write('Invalid input; Try again.'), nl, get_integer(Prompt, Min, Max, Option).
+
+get_boolean(Prompt, Option):-
+    write(Prompt), nl,
+    read(Option), member(Option, ['yes', 'no']).
 
 
 

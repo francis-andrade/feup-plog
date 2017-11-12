@@ -106,20 +106,4 @@ map_redefined(Pred, L1, L2, L3, L4):-
     L4=[X4 | L42],
     call(Pred, X1, X2, X3, X4),
     map_redefined(Pred, L12, L22, L32, L42).
-    
-    
-
-
-%--------------------- Obter inputs --------------------%
-get_integer(Prompt, Min, Max, Option):-
-    write(Prompt), nl,
-    read(Option), integer(Option),
-    Option >= Min, Option =< Max.
-
-get_integer(Prompt, Min, Max, Option):-
-    write('Invalid input; Try again.'), nl, get_integer(Prompt, Min, Max, Option).
-
-get_boolean(Prompt, Option):-
-	write(Prompt), nl,
-	read(Option), member(Option, ['yes', 'no']).
 

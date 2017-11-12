@@ -3,7 +3,7 @@ Move is represented by [edge , row]
 */
 
 :-use_module(library(lists)).
-:-include('display.pl').
+:-include('user_interface.pl').
 :-include('utils.pl').
 :-include('make_move.pl').
 :-include('end_move.pl').
