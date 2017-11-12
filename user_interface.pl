@@ -25,7 +25,7 @@ display_main_menu:-
 
 %---------------------- Print board ---------------------%
 %chamadas recursivas
-display_matrix(8, []).
+display_matrix(8, _).
 display_matrix(N, [L|T]) :-
     N1 is N+1, N =< 7,
     display_line(L, N),

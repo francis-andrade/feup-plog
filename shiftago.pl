@@ -24,13 +24,13 @@ menu_option(1):-
 
 %starts player vs ai
 menu_option(2):-
-    asserta(game_mode(2)), get_cpu_difficulty, asserta(cpu_player(2)),
+    asserta(game_mode(2)), once(get_cpu_difficulty), asserta(cpu_player(2)),
     init(Board, PlayerOnePieces, PlayerTwoPieces),
     player_vs_cpu(Board, PlayerOnePieces, PlayerTwoPieces, 1).
 
 %starts ai vs ai
 menu_option(3):-
-    asserta(game_mode(3)), get_cpu_difficulty, asserta(cpu_player(0)),
+    asserta(game_mode(3)), once(get_cpu_difficulty), asserta(cpu_player(0)),
     init(Board, PlayerOnePieces, PlayerTwoPieces),
     cpu_vs_cpu(Board, PlayerOnePieces, PlayerTwoPieces, 1).
 
