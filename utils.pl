@@ -1,20 +1,20 @@
 :-use_module(library(lists)).
 
 
-sublist_start([],L):- ! .
+sublist_start([],_L):- ! .
 
 sublist_start(L1, L):- L1=[X | L12], L=[X | L2], sublist_start(L12 , L2).
 
 sublist(L1, L) :- sublist_start(L1, L).
 
-sublist(L1,L) :- L=[X | L2], sublist(L1 , L2).
+sublist(L1,L) :- L=[_X | L2], sublist(L1 , L2).
 
 %switches the two players
 switch_player(1,2).
 switch_player(2,1).
 
 
-rate_count(Elem, [], N, N):- ! .
+rate_count(_Elem, [], N, N):- ! .
 
 rate_count(Elem, List, N, Count):-
     List=[X | L2],
@@ -26,17 +26,17 @@ rate_count(Elem, List, N, Count):-
 rate(Elem, List, N):-
     rate_count(Elem, List, N, 0).
 
-rate_adj_count(Elem, [], N, Count, Max_Count, ElemJustAppeared):-
+rate_adj_count(_Elem, [], N, Count, Max_Count, _ElemJustAppeared):-
     (Count > Max_Count, N=Count) ;
     ( \+ (Count > Max_Count), N=Max_Count).
 
-rate_adj_count(Elem, List, N, Count, Max_Count, ElemJustAppeared):-
+rate_adj_count(Elem, List, N, _Count, Max_Count, ElemJustAppeared):-
     List=[X | L2],
     ElemJustAppeared = 0,
     X \= Elem,
     rate_adj_count(Elem, L2, N, 0, Max_Count, 0).
 
-rate_adj_count(Elem, List, N, Count, Max_Count, ElemJustAppeared):-
+rate_adj_count(Elem, List, N, _Count, Max_Count, ElemJustAppeared):-
     List=[X | L2],
     ElemJustAppeared = 0,
     X = Elem,
@@ -62,7 +62,7 @@ rate_adj_count(Elem, List, N, Count, Max_Count, ElemJustAppeared):-
 rate_adj(Elem, List, N):-
         rate_adj_count(Elem, List, N, 0, 0, 0).
 
-max_list_aux([], Position, Value, Position, Value, Ind):- ! .
+max_list_aux([], Position, Value, Position, Value, _Ind):- ! .
 
 max_list_aux(List, Position, Value, Position_tmp, Value_tmp, Ind):-
     List=[X | L2],
@@ -83,7 +83,7 @@ replace_nth([_|Rest], 1, X, [X|Rest]).
 replace_nth([X|Rest], N, Elem, [X|NRest]):-
     N > 1, N1 is N-1, replace_nth(Rest, N1, Elem, NRest).
 
-create_list(Elem, 0, []):- !.
+create_list(_Elem, 0, []):- !.
 
 create_list(Elem, N, List):-
     List=[X | L2],
@@ -91,7 +91,7 @@ create_list(Elem, N, List):-
     N1 is N-1,
     create_list(Elem, N1, L2).
 
-map_redefined(Pred, [], [], []):- ! .
+map_redefined(_Pred, [], [], []):- ! .
 
 map_redefined(Pred, L1, L2, L3):-
     L1=[X1 | L12],
@@ -101,7 +101,7 @@ map_redefined(Pred, L1, L2, L3):-
     call(Pred, X1, X2, X3),
     map_redefined(Pred, L12, L22, L32).
 
-map_redefined(Pred, [], [], [], []):- ! .
+map_redefined(_Pred, [], [], [], []):- ! .
 
 map_redefined(Pred, L1, L2, L3, L4):-
     L1=[X1 | L12],

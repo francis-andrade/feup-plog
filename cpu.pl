@@ -38,7 +38,7 @@ valid_move(Board, Player, ['down', N], NewBoard) :-
 	valid_move(Trans_Board, Player, ['right',N], Trans_NewBoard),
 	transpose(Trans_NewBoard,NewBoard),!.
 
-valid_move(Board, Player, Move, 0).
+valid_move(_Board, _Player, _Move, 0).
 
 
 
@@ -54,7 +54,7 @@ valid_moves_make_list_aux(Board, Player, ['up', 8], ListOfMoves_0):-
         !,
         valid_moves_make_list_aux(Board, Player, ['down',1], ListOfMoves_0).
 
-valid_moves_make_list_aux(Board, Player, ['down', 8], ListOfMoves_0):-
+valid_moves_make_list_aux(_Board, _Player, ['down', 8], ListOfMoves_0):-
         !,
         ListOfMoves_0=[].
 
@@ -95,14 +95,14 @@ max_pieces_adj_aux_main(Board, Player, Position, Value, Position_tmp, Value_tmp,
     (\+ ( X > Value_tmp),
     max_pieces_adj_aux(Board, Player, Position, Value, Position_tmp, Value_tmp, Ind1))).
 
-max_pieces_adj_aux(Board, Player, Position, Value, Position, Value, 25):-  ! .
+max_pieces_adj_aux(_Board, _Player, Position, Value, Position, Value, 25):-  ! .
 
 max_pieces_adj_aux(Board, Player, Position, Value, Position_tmp, Value_tmp, Ind):-
     Ind<8, !, nth1(Ind, Board, Line),
     max_pieces_adj_aux_main(Board, Player, Position, Value, Position_tmp, Value_tmp, Ind, Line).
 
 max_pieces_adj_aux(Board, Player, Position, Value, Position_tmp, Value_tmp, Ind):-
-    Ind < 15, !, N is (Ind - 7),length(Board, Tam), transpose(Board, Trans_Board),  nth1(N, Trans_Board, Line),
+    Ind < 15, !, N is (Ind - 7),length(Board, _Tam), transpose(Board, Trans_Board),  nth1(N, Trans_Board, Line),
     max_pieces_adj_aux_main(Board, Player, Position, Value, Position_tmp, Value_tmp, Ind, Line).
 
 max_pieces_adj_aux(Board, Player,  Position, Value, Position_tmp, Value_tmp, Ind):-
@@ -128,16 +128,16 @@ max_pieces_adj(Board, Player, Position,  Value):-
 
 
 
-rate_adj_formula_count(Elem, [], N, Count, Sum, ElemJustAppeared):-
+rate_adj_formula_count(_Elem, [], N, Count, Sum, _ElemJustAppeared):-
     N is Sum + Count^5.
 
-rate_adj_formula_count(Elem, List, N, Count, Sum, ElemJustAppeared):-
+rate_adj_formula_count(Elem, List, N, _Count, Sum, ElemJustAppeared):-
     List=[X | L2],
     ElemJustAppeared = 0,
     X \= Elem,
     rate_adj_formula_count(Elem, L2, N, 0, Sum, 0).
 
-rate_adj_formula_count(Elem, List, N, Count, Sum, ElemJustAppeared):-
+rate_adj_formula_count(Elem, List, N, _Count, Sum, ElemJustAppeared):-
     List=[X | L2],
     ElemJustAppeared = 0,
     X = Elem,
@@ -166,7 +166,7 @@ value_formula_aux_main(Board, Player, Value, Count, Ind, Line):-
      NCount is Count+X,
     value_formula_aux(Board, Player, Value, NCount, Ind1).
 
-value_formula_aux(Board, Player, Value,  Value, 25):- ! .
+value_formula_aux(_Board, _Player, Value,  Value, 25):- ! .
 
 value_formula_aux(Board, Player, Value, Value_tmp, Ind):-
     Ind<8, !, nth1(Ind, Board, Line),
@@ -195,24 +195,24 @@ value_formula_aux(Board, Player, Value, Value_tmp, Ind):-
 value_formula(Board, Player,  Value):-
         value_formula_aux(Board, Player, Value, 0, 1).
 
-value(0, Player, -10^7):- ! .
+value(0, _Player, -10^7):- ! .
 
 value(Board, Player, Value):-
-	max_pieces_adj(Board, Player, PositionPlayer, ValuePlayer),
+	max_pieces_adj(Board, Player, _PositionPlayer, ValuePlayer),
 	ValuePlayer >= 5, !,  Value is 10 ^ 6.
 
 value(Board, Player, Value):-
-	NPlayer is mod(Player,2) + 1, valid_moves(Board, NPlayer, ListOfMoves), length(ListOfMoves, Size), create_list(Nplayer, Size, ListPlayer),
-	map_redefined(max_pieces_adj, ListOfMoves, ListPlayer, Positions, Values),  max_list( Values, PositionNPlayer, ValueNPlayer),
+	NPlayer is mod(Player,2) + 1, valid_moves(Board, NPlayer, ListOfMoves), length(ListOfMoves, Size), create_list(NPlayer, Size, ListPlayer),
+	map_redefined(max_pieces_adj, ListOfMoves, ListPlayer, _Positions, Values),  max_list( Values, _PositionNPlayer, ValueNPlayer),
 	ValueNPlayer>=5, !, Value is (0 - 10^6).
 
 value(Board, Player, Value):-
         value_formula(Board, Player,  ValuePlayer),
-        NPlayer is mod(Player,2) + 1, valid_moves(Board, NPlayer, ListOfMoves), length(ListOfMoves, Size), create_list(Nplayer, Size, ListPlayer),
-        map_redefined(value_formula, ListOfMoves, ListPlayer, Values), max_list( Values, PositionNPlayer, ValueNPlayer),
+        NPlayer is mod(Player,2) + 1, valid_moves(Board, NPlayer, ListOfMoves), length(ListOfMoves, Size), create_list(NPlayer, Size, ListPlayer),
+        map_redefined(value_formula, ListOfMoves, ListPlayer, Values), max_list( Values, _PositionNPlayer, ValueNPlayer),
         Value is ValuePlayer-ValueNPlayer.
 
-cpu_move(Level, Board, Player, 'undefined', 'undefined', 0,  0):- write('b'),! .
+cpu_move(_Level, _Board, _Player, 'undefined', 'undefined', 0,  0):- write('b'),! .
 
 cpu_move(Board, Player, Move, NewBoard, CurrentPieces,  NewCurrentPieces):-
 	cpu_level(3),
@@ -222,15 +222,15 @@ cpu_move(Board, Player, Move, NewBoard, CurrentPieces,  NewCurrentPieces):-
 	(ValueMove > (0 -10^7),write('b5'), convert_order_Move(PositionMove, Move),write('b6'), nth1(PositionMove, ListOfMoves, NewBoard), NewCurrentPieces is CurrentPieces - 1)).
 
 cpu_move(Board, Player, Move, NewBoard, CurrentPieces,  NewCurrentPieces):-
-	cpu_level(2),
+	cpu_level(2), write('b6'),
 	valid_moves_make_list(Board, Player, ListOfMoves), length(ListOfMoves, Size), create_list(Player, Size, ListPlayer),
-	map_redefined( max_pieces_adj, ListOfMoves, ListPlayer, Positions, Values), max_list(Values, PositionMove, ValueMove),
+	map_redefined( max_pieces_adj, ListOfMoves, ListPlayer, _Positions, Values), max_list(Values, PositionMove, ValueMove),
 	((ValueMove is (0 -10^7), Move ='undefined', NewBoard='undefined', NewCurrentPieces=0) ;
 	(ValueMove > (0 -10^7), convert_order_Move(PositionMove, Move), nth1(PositionMove, ListOfMoves, NewBoard), NewCurrentPieces is CurrentPieces - 1)).
 
 cpu_move(Board, Player, Move, NewBoard, CurrentPieces,  NewCurrentPieces):-
 	cpu_level(1),
-	valid_moves_make_list(Board, Player, ListOfMoves), length(ListOfMoves, Size), create_list(Player, Size, ListPlayer), random(1, Size, PositionMove),
+	valid_moves_make_list(Board, Player, ListOfMoves), length(ListOfMoves, Size), create_list(Player, Size, _ListPlayer), random(1, Size, PositionMove),
 	convert_order_Move(PositionMove, Move), nth1(PositionMove, ListOfMoves, NewBoard), NewCurrentPieces is CurrentPieces - 1.
 
 convert_order_Move(N, Move):-

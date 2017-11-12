@@ -89,6 +89,12 @@ test17:-
         value([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,2,0,0,0,0],[0,0,0,2,0,0,0],[0,0,0,0,2,0,0],[0,0,0,0,0,2,0],[1,1,1,1,0,0,2]],2, V),
         write(V).
 
+test192:-
+                assert(cpu_level(3)),
+        display_board([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,1,0,0,0,0,0],[1,2,1,1,0,0,0]]),
+        value([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,1,0,0,0,0,0],[1,2,1,1,0,0,0]],2, V),
+        write(V).
+
 %cpu_move 
 test18:-
 		assert(cpu_level(3)),
@@ -98,11 +104,7 @@ test18:-
         write('Move: '),write(Move),
         write('\nNew Current Pieces: '), write(NewCurrentPieces).
 
-test192:-
-		assert(cpu_level(3)),
-        display_board([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,1,0,0,0,0,0],[1,2,1,1,0,0,0]]),
-        value([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,1,0,0,0,0,0],[1,2,1,1,0,0,0]],2, V),
-        write(V).
+
 
 test19:-
 		assert(cpu_level(3)),
@@ -127,6 +129,41 @@ test21:-
         display_board(NewBoard),
         write('Move: '),write(Move),
         write('\nNew Current Pieces: '), write(NewCurrentPieces).
+
+test22:-
+         assert(cpu_level(2)),
+        display_board([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[2,2,0,2,2,1,0]]),
+        cpu_move([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[2,2,0,2,2,1,0]],2, Move, NewBoard, 4, NewCurrentPieces),
+        display_board(NewBoard),
+        write('Move: '),write(Move),
+        write('\nNew Current Pieces: '), write(NewCurrentPieces).
+
+
+
+test23:-
+                assert(cpu_level(2)),
+        display_board([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[1,1,1,1,0,0,0]]),
+        cpu_move([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[1,1,1,1,0,0,0]],2, Move,NewBoard, 4, NewCurrentPieces),
+        display_board(NewBoard),
+        write('Move: '),write(Move),
+        write('\nNew Current Pieces: '), write(NewCurrentPieces).
+
+test24:-
+                assert(cpu_level(2)),
+        display_board([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,2,0,0,0],[0,0,0,0,2,0,0],[0,0,0,0,0,2,0],[1,1,1,1,0,0,2]]),
+        cpu_move( [[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,2,0,0,0],[0,0,0,0,2,0,0],[0,0,0,0,0,2,0],[1,1,1,1,0,0,2]],2, Move, NewBoard, 4, NewCurrentPieces),
+        display_board(NewBoard),
+        write('Move: '),write(Move),
+        write('\nNew Current Pieces: '), write(NewCurrentPieces).
+
+test25:-
+                assert(cpu_level(2)),
+        display_board([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,2,0,0,0,0],[0,0,0,2,0,0,0],[0,0,0,0,2,0,0],[0,0,0,0,0,2,0],[1,1,1,1,0,0,0]]),
+        cpu_move([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,2,0,0,0,0],[0,0,0,2,0,0,0],[0,0,0,0,2,0,0],[0,0,0,0,0,2,0],[1,1,1,1,0,0,0]],2, Move, NewBoard, 4, NewCurrentPieces),
+        display_board(NewBoard),
+        write('Move: '),write(Move),
+        write('\nNew Current Pieces: '), write(NewCurrentPieces).
+
 
 summ(A,B,C,D):-
         D is A+B+C.  
