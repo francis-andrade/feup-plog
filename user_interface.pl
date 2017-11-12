@@ -1,4 +1,4 @@
-%--------------------- Imprimir menu --------------------%
+%---------------------- Print menu ----------------------%
 %mostra o titulo do jogo
 display_title:-
     write('      _     _  __ _'), nl,
@@ -23,7 +23,7 @@ display_options:-
 display_main_menu:-
     display_title, nl, display_options, nl.
 
-%------------------ Imprimir tabuleiro ------------------%
+%---------------------- Print board ---------------------%
 %chamadas recursivas
 display_matrix(8, []).
 display_matrix(N, [L|T]) :-
@@ -53,6 +53,15 @@ display_board(X):- display_top, display_edge, display_matrix(1, X), display_edge
 display_move(Move):-
     write('CPU player played '), write(Move), write('.'), nl.
 
+%writes the number of pieces
+write_pieces(Player, 1):-
+    write('Player '), write(Player),
+    write(', it\'s your turn. You only have one piece left, make it count!'), nl.
+
+write_pieces(Player, Pieces):-
+    write('Player '), write(Player),
+    write(', it\'s your turn. You have '),
+    write(Pieces), write(' pieces left.'), nl.
 
 %--------------------- Obter inputs --------------------%
 get_integer(Prompt, Min, Max, Option):-
@@ -66,6 +75,15 @@ get_integer(Prompt, Min, Max, Option):-
 get_boolean(Prompt, Option):-
     write(Prompt), nl,
     read(Option), member(Option, ['yes', 'no']).
+
+%checks if the player wants to leave the game
+return_to_main_menu(no).
+return_to_main_menu(yes):-
+    shiftago.
+
+get_cpu_difficulty:-
+    get_integer('Please choose a difficulty level for the CPU (1,2,3):', 1, 3, Level),
+    asserta(cpu_level(Level)).
 
 
 
