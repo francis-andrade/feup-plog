@@ -229,8 +229,13 @@ cpu_move(Board, Player, Move, NewBoard, CurrentPieces,  NewCurrentPieces):-
 
 cpu_move(Board, Player, Move, NewBoard, CurrentPieces,  NewCurrentPieces):-
 	cpu_level(1),
-	valid_moves_make_list(Board, Player, ListOfMoves), length(ListOfMoves, Size), create_list(Player, Size, _ListPlayer), random(1, Size, PositionMove),
-	convert_order_Move(PositionMove, Move), nth1(PositionMove, ListOfMoves, NewBoard), NewCurrentPieces is CurrentPieces - 1.
+	valid_moves_make_list(Board, Player, ListOfMoves), 
+	cpu_generate_move(ListOfMoves, NewBoard, PositionMove),
+	convert_order_Move(PositionMove, Move),  NewCurrentPieces is CurrentPieces - 1.
+
+cpu_generate_move(ListOfMoves, NewBoard, PositionMove):-
+	(length(ListOfMoves, Size), random(1, Size, PositionMove), nth1(PositionMove, ListOfMoves, NewBoard), NewBoard \= 0);
+	cpu_generate_move(ListOfMoves, NewBoard, PositionMove).
 
 convert_order_Move(N, Move):-
 		 N<8, !,
