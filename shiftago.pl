@@ -51,7 +51,7 @@ player_vs_cpu(Board, CurrentPieces, OpponentPieces, CurrentPlayer):-
     cpu_player(CurrentPlayer), !,
     display_board(Board),
     cpu_move(Board, CurrentPlayer, Move, NewBoard, CurrentPieces, NewCurrentPieces),
-    display_move(Move),
+    display_move(CurrentPlayer, Move),
     end_move(CurrentPlayer, NewBoard, OpponentPieces, NewCurrentPieces).
 
 player_vs_cpu(Board, CurrentPieces, OpponentPieces, CurrentPlayer):-
@@ -64,5 +64,5 @@ player_vs_cpu(Board, CurrentPieces, OpponentPieces, CurrentPlayer):-
 cpu_vs_cpu(Board, CurrentPieces, OpponentPieces, CurrentPlayer):-
     display_board(Board),
     cpu_move(Board, CurrentPlayer, Move, NewBoard, CurrentPieces, NewCurrentPieces),
-    display_move(Move),
+    display_move(CurrentPlayer, Move),
     end_move(CurrentPlayer, NewBoard, OpponentPieces, NewCurrentPieces).

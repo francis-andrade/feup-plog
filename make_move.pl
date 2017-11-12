@@ -46,7 +46,7 @@ get_edge(Edge):-
     read(Edge), member(Edge,['up', 'down', 'left', 'right']).
 
 get_edge(Edge):-
-    write('Invalid input; Try again.'), nl,
+    write('Invalid edge; Try again.'), nl,
     get_edge(Edge).
 
 %gets the row
