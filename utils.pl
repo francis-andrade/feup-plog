@@ -93,7 +93,6 @@ create_list(Elem, N, List):-
 map_redefined(_Pred, [], [], []):- ! .
 
 map_redefined(Pred, L1, L2, L3):-
-    write('map_pred'),
     L1=[X1 | L12],
     L2=[X2 | L22],
     L3=[X3 | L32],

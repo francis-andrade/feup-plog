@@ -4,10 +4,8 @@ Move is represented by [edge , row]
 
 :-use_module(library(lists)).
 :- use_module(library(random)).
-:-include('user_interface.pl').
-:-include('utils.pl').
-:-include('make_move.pl').
-:-include('end_move.pl').
+
+
 
 
 
@@ -199,18 +197,15 @@ value_formula(Board, Player,  Value):-
 value(0, _Player, -10^7):- ! .
 
 value(Board, Player, Value):-
-	write('value_1'),display_board(Board), write(Player),
-	max_pieces_adj(Board, Player, _PositionPlayer, ValuePlayer), write(ValuePlayer), 
+	max_pieces_adj(Board, Player, _PositionPlayer, ValuePlayer), 
 	ValuePlayer >= 5, !,  Value is 10 ^ 6.
 
 value(Board, Player, Value):-
-	write('value_2'),
 	NPlayer is mod(Player,2) + 1, valid_moves(Board, NPlayer, ListOfMoves), length(ListOfMoves, Size), create_list(NPlayer, Size, ListPlayer),
 	map_redefined(max_pieces_adj, ListOfMoves, ListPlayer, _Positions, Values),  max_list( Values, _PositionNPlayer, ValueNPlayer),
 	ValueNPlayer>=5, !, Value is (0 - 10^6).
 
 value(Board, Player, Value):-
-	write('value_last'),
         value_formula(Board, Player,  ValuePlayer),
         NPlayer is mod(Player,2) + 1, valid_moves(Board, NPlayer, ListOfMoves), length(ListOfMoves, Size), create_list(NPlayer, Size, ListPlayer),
         map_redefined(value_formula, ListOfMoves, ListPlayer, Values), max_list( Values, _PositionNPlayer, ValueNPlayer),
@@ -220,11 +215,10 @@ cpu_move(_Level, _Board, _Player, 'undefined', 'undefined', 0,  0):- ! .
 
 cpu_move(Board, Player, Move, NewBoard, CurrentPieces,  NewCurrentPieces):-
 	cpu_level(3), 
-	write('b1'),
-	valid_moves_make_list(Board, Player, ListOfMoves), length(ListOfMoves, Size), create_list(Player, Size, ListPlayer),write('b2'),
-	map_redefined( value, ListOfMoves, ListPlayer, Values),write('b3'), max_list(Values, PositionMove, ValueMove), 
+	valid_moves_make_list(Board, Player, ListOfMoves), length(ListOfMoves, Size), create_list(Player, Size, ListPlayer),
+	map_redefined( value, ListOfMoves, ListPlayer, Values), max_list(Values, PositionMove, ValueMove), 
 	((ValueMove is (0 -10^7), Move='undefined', NewBoard='undefined', NewCurrentPieces=0) ;
-	(ValueMove > (0 -10^7), convert_order_Move(PositionMove, Move), nth1(PositionMove, ListOfMoves, NewBoard), NewCurrentPieces is CurrentPieces - 1)), write('b6').
+	(ValueMove > (0 -10^7), convert_order_Move(PositionMove, Move), nth1(PositionMove, ListOfMoves, NewBoard), NewCurrentPieces is CurrentPieces - 1)).
 
 cpu_move(Board, Player, Move, NewBoard, CurrentPieces,  NewCurrentPieces):-
 	cpu_level(2), 
@@ -255,11 +249,3 @@ convert_order_Move(N, Move):-
                  Move=['down', N1].
 
 
-/*test:-
-	valid_moves_make_list([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[2,2,0,2,2,1,0]],2,	ListOfMoves).
-test18 :-
-        display_board([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[2,2,0,2,2,1,0]]),
-        cpu_move(3, [[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[2,2,0,2,2,1,0]],2, Move, NewBoard, 4, NewCurrentPieces),
-        display_board(NewBoard),
-        write('Move: '),write(Move),
-        write('\nNew Current Pieces: '), write(NewCurrentPieces).*/
