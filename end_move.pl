@@ -11,7 +11,7 @@ check_for_win(Player, Board):- check_diagonals(Player, Board).
 check_for_win(Player, Board):- reverse(Board, NBoard), check_diagonals(Player, NBoard).
 
 %base model checks if a set of five consecutive player pieces exists in a line (easier checked in a list)
-check_lines(Player, [X|Rest]):- sublist([Player,Player,Player,Player,Player], X).
+check_lines(Player, [X|_Rest]):- sublist([Player,Player,Player,Player,Player], X).
 check_lines(Player, [_|Rest]):- check_lines(Player, Rest).
 
 check_colums(Player, Board):- transpose(Board, TBoard), check_lines(Player, TBoard).
@@ -24,8 +24,8 @@ check_diagonals(Player,Board) :- get_diagonal(2,1,Board,[],Line), check_lines(Pl
 check_diagonals(Player,Board) :- get_diagonal(3,1,Board,[],Line), check_lines(Player,[Line]).
 
 %obtaining list with diagonal pieces
-get_diagonal(8, _, Board, Line, Line):- ! .
-get_diagonal(_, 8, Board, Line, Line):- ! .
+get_diagonal(8, _, _Board, Line, Line):- ! .
+get_diagonal(_, 8, _Board, Line, Line):- ! .
 get_diagonal(L, C, Board, Line, FLine):-
     L < 8, C < 8, L1 is L+1, C1 is C+1,
     get_line(L, Board, _tmp), nth1(C, _tmp, _value),
@@ -38,11 +38,11 @@ get_diagonal(L, C, Board, Line, FLine):-
 %ends move by first checking if the player one, then if the player lost and then
 %changing the player and starting a new move
 
-end_move(CurrentPlayer, NewBoard, OpponentPieces, NewCurrentPieces):-
+end_move(CurrentPlayer, NewBoard, _OpponentPieces, NewCurrentPieces):-
     check_for_win(NewCurrentPieces, CurrentPlayer, NewBoard),
     end_game(CurrentPlayer).
 
-end_move(CurrentPlayer, NewBoard, OpponentPieces, 0):-
+end_move(CurrentPlayer, NewBoard, _OpponentPieces, 0):-
 	switch_player(CurrentPlayer, NewPlayer),
 	display_board(NewBoard),
 	write('Player '), write(CurrentPlayer),

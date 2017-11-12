@@ -2,7 +2,6 @@
 
 
 sublist_start([],_L):- ! .
-
 sublist_start(L1, L):- L1=[X | L12], L=[X | L2], sublist_start(L12 , L2).
 
 sublist(L1, L) :- sublist_start(L1, L).
@@ -94,6 +93,7 @@ create_list(Elem, N, List):-
 map_redefined(_Pred, [], [], []):- ! .
 
 map_redefined(Pred, L1, L2, L3):-
+    write('map_pred'),
     L1=[X1 | L12],
     L2=[X2 | L22],
     L3=[X3 | L32],
@@ -104,6 +104,7 @@ map_redefined(Pred, L1, L2, L3):-
 map_redefined(_Pred, [], [], [], []):- ! .
 
 map_redefined(Pred, L1, L2, L3, L4):-
+    
     L1=[X1 | L12],
     L2=[X2 | L22],
     L3=[X3 | L32],

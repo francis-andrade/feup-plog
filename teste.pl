@@ -117,7 +117,7 @@ test201:-
         abolish(cpu_level/1),
         asserta(cpu_level(3)),
         display_board([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0]]),
-        cpu_move( [[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0]],1, Move, NewBoard, 4, NewCurrentPieces),
+        cpu_move( [[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0]],1, Move, NewBoard, 22, NewCurrentPieces),
         display_board(NewBoard),
         write('Move: '),write(Move),
         write('\nNew Current Pieces: '), write(NewCurrentPieces).
@@ -214,6 +214,10 @@ test29:-
         display_board(NewBoard),
         write('Move: '),write(Move),
         write('\nNew Current Pieces: '), write(NewCurrentPieces).
+
+test30:-
+        max_pieces_adj([[2,1,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0]],2,_Position, Value),
+        write(Value).
 
 
 summ(A,B,C,D):-
