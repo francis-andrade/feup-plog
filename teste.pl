@@ -2,7 +2,7 @@
 :-include('display.pl').
 :-include('utils.pl').
 :-include('make_move.pl').
-:-include('check_win.pl').
+:-include('end_move.pl').
 :-include('cpu.pl').
 
 
