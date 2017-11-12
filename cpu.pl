@@ -41,7 +41,7 @@ valid_move(Board, Player, ['down', N], NewBoard) :-
 valid_move(_Board, _Player, _Move, 0).
 
 
-%---------------------------VALID_MOVES_MAKE_LIST-----------------------------------------------------------
+%---------------------------VALID_MOVES_MAKE_LIST-------------------------------------------------
 %Gives the list of valid moves for each Board and Player. A 0 represents a move that is not valid
 valid_moves_make_list_aux(Board, Player, ['left', 8], ListOfMoves_0):-
 	!,
@@ -129,6 +129,8 @@ max_pieces_adj_aux(Board, Player,  Position, Value, Position_tmp, Value_tmp, Ind
 max_pieces_adj(Board, Player, Position,  Value):-
         max_pieces_adj_aux(Board, Player, Position, Value, -1, -1000,1).
 
+max_pieces_adj(0, _Player, -1, -1).
+
 
 
 
@@ -170,7 +172,7 @@ rate_adj_formula_count(Elem, List, N, Count, Sum, ElemJustAppeared):-
 rate_adj_formula(Elem, List, N):-
         rate_adj_formula_count(Elem, List, N, 0, 0, 0).
 
-%------------------------VALUE_FORMULA-------------------------------------------------------------------------------------------------------------------
+%------------------------VALUE_FORMULA-------------------------------------------
 %This formula returns an intermediate level of a value of a board for a certain player.
 %It is computed by calculating the sum of rate_adj_formula for each diagonal, line and column
 %The final value of a Board is computed using the function value
@@ -208,12 +210,14 @@ value_formula_aux(Board, Player, Value, Value_tmp, Ind):-
 value_formula(Board, Player,  Value):-
         value_formula_aux(Board, Player, Value, 0, 1).
 
-value(0, _Player, -10^7):- ! .
 
 
-%---------------------------------------------------------VALUE--------------------------------------------------------------------------------------------
+
+%---------------------------------------------------------VALUE---------------------------------------
 %This function returns the value of a Board for a certain player.
 %It is computed by calculating the value_formula of the Board and subtracting the maximum value_formula that a the next player can obtain in the following move of his own
+value(0, _Player, -10^7):- ! .
+
 value(Board, Player, Value):-
 	max_pieces_adj(Board, Player, _PositionPlayer, ValuePlayer), 
 	ValuePlayer >= 5, !,  Value is 10 ^ 6.
