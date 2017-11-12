@@ -5,10 +5,7 @@ Move is represented by [edge , row]
 :-use_module(library(lists)).
 :- use_module(library(random)).
 
-
-
-
-%-----------------------VALID_MOVE-------------------------------
+%---------------------- VALID_MOVE ----------------------%
 %Gives the NewBoard for each Move. In case the move is not possible NewBoard is instantiated to 0
 valid_move(Board, Player,  ['left', N], NewBoard) :-
 
@@ -41,7 +38,7 @@ valid_move(Board, Player, ['down', N], NewBoard) :-
 valid_move(_Board, _Player, _Move, 0).
 
 
-%---------------------------VALID_MOVES_MAKE_LIST-------------------------------------------------
+%--------------------- VALID_MOVES_MAKE_LIST ----------------------%
 %Gives the list of valid moves for each Board and Player. A 0 represents a move that is not valid
 valid_moves_make_list_aux(Board, Player, ['left', 8], ListOfMoves_0):-
 	!,
@@ -71,7 +68,7 @@ valid_moves_make_list(Board, Player, ListOfMoves_0):-
 	valid_moves_make_list_aux(Board, Player,['left',1], ListOfMoves_0).
 
 
-%---------------------------VALID_MOVES------------------------------------------------------------------------------------------------------
+%--------------------- VALID_MOVES ----------------------%
 %Same as Valid_Moves, with the only difference that it eliminates the 0's from the list, so it only returns the moves that are actually valid
 cmp_lists(ListOfMoves, ListOfMoves_0):-
 	(ListOfMoves=[], ListOfMoves_0=[]);
@@ -91,7 +88,7 @@ valid_moves(Board, Player, ListOfMoves):-
 	cmp_lists(ListOfMoves, ListOfMoves_0).
 
 
-%---------------------------MAX_PIECES_ADJ-----------------------------------------------------------
+%--------------------- MAX_PIECES_ADJ ----------------------%
 %Returns the maximum number of adjacent pieces in the Board for a certain Player
 max_pieces_adj_aux_main(Board, Player, Position, Value, Position_tmp, Value_tmp, Ind, Line):-
      Ind1 is Ind + 1, rate_adj(Player, Line, X),(
@@ -132,10 +129,8 @@ max_pieces_adj(Board, Player, Position,  Value):-
 max_pieces_adj(0, _Player, -1, -1).
 
 
-
-
-%---------------------------RATE_ADJ_FORMULA----------------------------------------------------------------------------------------------------
-%This function computes a formula that determines the value of a certain Line for a certain Player. This formula is calculated as the sum of all 
+%--------------------- RATE_ADJ_FORMULA ----------------------%
+%This function computes a formula that determines the value of a certain Line for a certain Player. This formula is calculated as the sum of all
 %adjacent pieces in that line raised to the power of five
 %So for example, if a Line is [1,1,1,0,2,2,1,1] and the player is 1 this formula gives the result 3^5+2^5=275. In case the player is 2, it gives
 %the result 2^5=32.
@@ -172,7 +167,7 @@ rate_adj_formula_count(Elem, List, N, Count, Sum, ElemJustAppeared):-
 rate_adj_formula(Elem, List, N):-
         rate_adj_formula_count(Elem, List, N, 0, 0, 0).
 
-%------------------------VALUE_FORMULA-------------------------------------------
+%--------------------- VALUE_FORMULA ----------------------%
 %This formula returns an intermediate level of a value of a board for a certain player.
 %It is computed by calculating the sum of rate_adj_formula for each diagonal, line and column
 %The final value of a Board is computed using the function value
@@ -210,16 +205,13 @@ value_formula_aux(Board, Player, Value, Value_tmp, Ind):-
 value_formula(Board, Player,  Value):-
         value_formula_aux(Board, Player, Value, 0, 1).
 
-
-
-
-%---------------------------------------------------------VALUE---------------------------------------
+%--------------------- VALUE ----------------------%
 %This function returns the value of a Board for a certain player.
 %It is computed by calculating the value_formula of the Board and subtracting the maximum value_formula that a the next player can obtain in the following move of his own
 value(0, _Player, -10^7):- ! .
 
 value(Board, Player, Value):-
-	max_pieces_adj(Board, Player, _PositionPlayer, ValuePlayer), 
+	max_pieces_adj(Board, Player, _PositionPlayer, ValuePlayer),
 	ValuePlayer >= 5, !,  Value is 10 ^ 6.
 
 value(Board, Player, Value):-
@@ -233,19 +225,19 @@ value(Board, Player, Value):-
         map_redefined(value_formula, ListOfMoves, ListPlayer, Values), max_list( Values, _PositionNPlayer, ValueNPlayer),
         Value is ValuePlayer-ValueNPlayer.
 
-%----------------------------------------------------------------CPU_MOVE---------------------------------------------------------
+%--------------------- CPU_MOVE ----------------------%
 %Gives the Move that the cpu is going to make for a certain Board and Player
 cpu_move( _Board, _Player, 'undefined', 'undefined', 0,  0):- ! .
 
 cpu_move(Board, Player, Move, NewBoard, CurrentPieces,  NewCurrentPieces):-
-	cpu_level(3), 
+	cpu_level(3),
 	valid_moves_make_list(Board, Player, ListOfMoves), length(ListOfMoves, Size), create_list(Player, Size, ListPlayer),
-	map_redefined( value, ListOfMoves, ListPlayer, Values), max_list(Values, PositionMove, ValueMove), 
+	map_redefined( value, ListOfMoves, ListPlayer, Values), max_list(Values, PositionMove, ValueMove),
 	((ValueMove is (0 -10^7), Move='undefined', NewBoard='undefined', NewCurrentPieces=0) ;
 	(ValueMove > (0 -10^7),convert_order_Move(PositionMove, Move),  nth1(PositionMove, ListOfMoves, NewBoard),   NewCurrentPieces is CurrentPieces - 1)).
 
 cpu_move(Board, Player, Move, NewBoard, CurrentPieces,  NewCurrentPieces):-
-	cpu_level(2), 
+	cpu_level(2),
 	valid_moves_make_list(Board, Player, ListOfMoves), length(ListOfMoves, Size), create_list(Player, Size, ListPlayer),
 	map_redefined( max_pieces_adj, ListOfMoves, ListPlayer, _Positions, Values), max_list(Values, PositionMove, ValueMove),
 	((ValueMove is (0 -10^7), Move ='undefined', NewBoard='undefined', NewCurrentPieces=0) ;
@@ -253,7 +245,7 @@ cpu_move(Board, Player, Move, NewBoard, CurrentPieces,  NewCurrentPieces):-
 
 cpu_move(Board, Player, Move, NewBoard, CurrentPieces,  NewCurrentPieces):-
 	cpu_level(1),
-	valid_moves_make_list(Board, Player, ListOfMoves), 
+	valid_moves_make_list(Board, Player, ListOfMoves),
 	cpu_generate_move(ListOfMoves, NewBoard, PositionMove),
 	convert_order_Move(PositionMove, Move),  NewCurrentPieces is CurrentPieces - 1.
 
@@ -261,7 +253,7 @@ cpu_generate_move(ListOfMoves, NewBoard, PositionMove):-
 	(length(ListOfMoves, Size), random(1, Size, PositionMove), nth1(PositionMove, ListOfMoves, NewBoard), NewBoard \= 0);
 	cpu_generate_move(ListOfMoves, NewBoard, PositionMove).
 
-%---------------------------------------------CONVERT_ORDER_MOVE
+%--------------------- CONVERT_ORDER_MOVE ----------------------%
 %This function converts a number that represents the order of a Move in an array to the move itself
 %The order of the Moves in the array is left->right->up->down, in ascendant order for the numbers
 convert_order_Move(N, Move):-
@@ -279,5 +271,3 @@ convert_order_Move(N, Move):-
 convert_order_Move(N, Move):-
                  N<29, !,  N1 is N-21,
                  Move=['down', N1].
-
-

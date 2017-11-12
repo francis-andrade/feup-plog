@@ -85,10 +85,6 @@ get_cpu_difficulty:-
     get_integer('Please choose a difficulty level for the CPU (1,2,3):', 1, 3, Level),
     asserta(cpu_level(Level)).
 
-
-
-
-
 /*
    1 2 3 4 5 6 7
   +-------------+

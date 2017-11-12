@@ -38,8 +38,7 @@ menu_option(3):-
 init([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0]], 22, 22).
 
 %---------------------- Player vs Player ---------------------%
-
-%shows the board, asks for the pieces, makes the move and then ends the current
+%shows the board, asks for the pieces, makes the move and then ends the current play
 player_vs_player(Board, CurrentPieces, OpponentPieces, CurrentPlayer):-
     display_board(Board),
     write_pieces(CurrentPlayer, CurrentPieces),
