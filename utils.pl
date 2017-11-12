@@ -1,6 +1,7 @@
 :-use_module(library(lists)).
 
-
+%----------------------------------------------SUBLIST-------------------------------------------------------
+%Verifies if a list L1 is a member of a sublist L
 sublist_start([],_L):- ! .
 sublist_start(L1, L):- L1=[X | L12], L=[X | L2], sublist_start(L12 , L2).
 
@@ -12,7 +13,8 @@ sublist(L1,L) :- L=[_X | L2], sublist(L1 , L2).
 switch_player(1,2).
 switch_player(2,1).
 
-
+%----------------------------------------RATE--------------------------------------------------------------------------------------------------
+%Counts the number of times that Elem occurs in List
 rate_count(_Elem, [], N, N):- ! .
 
 rate_count(Elem, List, N, Count):-
@@ -25,6 +27,9 @@ rate_count(Elem, List, N, Count):-
 rate(Elem, List, N):-
     rate_count(Elem, List, N, 0).
 
+
+%----------------------------------------------------RATE_ADJ---------------------------------------------
+%Gives the maximum sublist whose only element is Elem that occurs in List
 rate_adj_count(_Elem, [], N, Count, Max_Count, _ElemJustAppeared):-
     (Count > Max_Count, N=Count) ;
     ( \+ (Count > Max_Count), N=Max_Count).
@@ -61,6 +66,9 @@ rate_adj_count(Elem, List, N, Count, Max_Count, ElemJustAppeared):-
 rate_adj(Elem, List, N):-
         rate_adj_count(Elem, List, N, 0, 0, 0).
 
+
+%----------------------------------------------------------------------MAX_LIST----------------------------------------------------------
+%Gives the Value and Position of the maximum number that occurs in a list
 max_list_aux([], Position, Value, Position, Value, _Ind):- ! .
 
 max_list_aux(List, Position, Value, Position_tmp, Value_tmp, Ind):-
@@ -76,13 +84,20 @@ max_list(List, Position, Value):-
     Min is 0-10^8,
     max_list_aux(List,Position, Value, -1, Min, 1).
 
+%-----------------------------------------GET_LINE----------------------------------------------
+%Gives the N th line of Board
 get_line(N, Board, Line):-
     nth1(N, Board, Line).
 
+%-----------------------------------REPLACE_NTH------------------------------------------------
+%Replaces the nth element of a list
 replace_nth([_|Rest], 1, X, [X|Rest]).
 replace_nth([X|Rest], N, Elem, [X|NRest]):-
     N > 1, N1 is N-1, replace_nth(Rest, N1, Elem, NRest).
 
+
+%--------------------------------------------------CREATE_LIST--------------------------------------------------------
+%Creates a list of size N, whose only element is Elem
 create_list(_Elem, 0, []):- !.
 
 create_list(Elem, N, List):-
@@ -91,6 +106,8 @@ create_list(Elem, N, List):-
     N1 is N-1,
     create_list(Elem, N1, L2).
 
+%---------------------------------------------------MAP_REDEFINED---------------------------------------------------------
+%Redefines the function map_redefined for 4 and 5 elements
 map_redefined(_Pred, [], [], []):- ! .
 
 map_redefined(Pred, L1, L2, L3):-
