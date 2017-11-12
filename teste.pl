@@ -220,5 +220,7 @@ test30:-
         write(Value).
 
 
+
+
 summ(A,B,C,D):-
         D is A+B+C.  

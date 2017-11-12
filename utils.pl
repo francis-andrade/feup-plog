@@ -73,7 +73,8 @@ max_list_aux(List, Position, Value, Position_tmp, Value_tmp, Ind):-
 
 
 max_list(List, Position, Value):-
-    max_list_aux(List,Position, Value, -1, -10000, 1).
+    Min is 0-10^8,
+    max_list_aux(List,Position, Value, -1, Min, 1).
 
 get_line(N, Board, Line):-
     nth1(N, Board, Line).

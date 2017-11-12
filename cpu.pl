@@ -218,7 +218,7 @@ cpu_move(Board, Player, Move, NewBoard, CurrentPieces,  NewCurrentPieces):-
 	valid_moves_make_list(Board, Player, ListOfMoves), length(ListOfMoves, Size), create_list(Player, Size, ListPlayer),
 	map_redefined( value, ListOfMoves, ListPlayer, Values), max_list(Values, PositionMove, ValueMove), 
 	((ValueMove is (0 -10^7), Move='undefined', NewBoard='undefined', NewCurrentPieces=0) ;
-	(ValueMove > (0 -10^7), convert_order_Move(PositionMove, Move), nth1(PositionMove, ListOfMoves, NewBoard), NewCurrentPieces is CurrentPieces - 1)).
+	(ValueMove > (0 -10^7),convert_order_Move(PositionMove, Move),  nth1(PositionMove, ListOfMoves, NewBoard),   NewCurrentPieces is CurrentPieces - 1)).
 
 cpu_move(Board, Player, Move, NewBoard, CurrentPieces,  NewCurrentPieces):-
 	cpu_level(2), 
