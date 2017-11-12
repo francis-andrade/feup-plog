@@ -17,15 +17,22 @@ shiftago:-
 menu_option(0).
 
 %starts player vs player
-menu_option(1):- assert(game_mode(1)),
+menu_option(1):-
+    asserta(game_mode(1)), asserta(cpu_level(0)),
     init(Board, PlayerOnePieces, PlayerTwoPieces),
     player_vs_player(Board, PlayerOnePieces, PlayerTwoPieces, 1).
 
 %starts player vs ai
-menu_option(2):- assert(game_mode(2)), player_vs_cpu.
+menu_option(2):-
+    asserta(game_mode(2)), get_cpu_difficulty,
+    init(Board, PlayerOnePieces, PlayerTwoPieces),
+    player_vs_cpu(Board, PlayerOnePieces, PlayerTwoPieces, 1, 2).
 
 %starts ai vs ai
-menu_option(3):- assert(game_mode(2)), cpu_vs_cpu.
+menu_option(3):-
+    asserta(game_mode(3)), get_cpu_difficulty,
+    init(Board, PlayerOnePieces, PlayerTwoPieces),
+    cpu_vs_cpu(Board, PlayerOnePieces, PlayerTwoPieces, 1).
 
 %creates a blank board
 init([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0]], 22, 22).
@@ -39,6 +46,9 @@ return_to_main_menu(no).
 return_to_main_menu(yes):-
     shiftago.
 
+get_cpu_dificulty:-
+    get_integer('Please choose a difficulty level for the CPU (1,2,3):', 1, 3, Difficulty),
+    asserta(cpu_level(Difficulty)).
 
 %---------------------- Player vs Player ---------------------%
 
@@ -64,8 +74,18 @@ player_vs_cpu(Board, CurrentPieces, OpponentPieces, CurrentPlayer, CPUPlayer):-
     CurrentPlayer=CPUPlayer, !,
     display_board(Board),
     cpu_move(Board, CurrentPlayer, Move, NewBoard, CurrentPieces, NewCurrentPieces),
+    display_move(Move),
     end_move(CurrentPlayer, NewBoard, OpponentPieces, NewCurrentPieces).
 
+player_vs_cpu(Board, CurrentPieces, OpponentPieces, CurrentPlayer, CPUPlayer):-
+    display_board(Board),
+    write_pieces(CurrentPlayer, CurrentPieces),
+    insert_piece(Board, CurrentPlayer, NewBoard, CurrentPieces, NewCurrentPieces),
+    end_move(CurrentPlayer, NewBoard, OpponentPieces, NewCurrentPieces).
 
 %------------------------- CPU vs CPU ------------------------%
-cpu_vs_cpu.%TODO
+cpu_vs_cpu(Board, CurrentPieces, OpponentPieces, CurrentPlayer):-
+    display_board(Board),
+    cpu_move(Board, CurrentPlayer, Move, NewBoard, CurrentPieces, NewCurrentPieces),
+    display_move(Move),
+    end_move(CurrentPlayer, NewBoard, OpponentPieces, NewCurrentPieces).

@@ -50,6 +50,9 @@ display_top :- write('   1 2 3 4 5 6 7'), put_code(10).
 display_edge :- write('  +-------------+'), put_code(10).
 display_board(X):- display_top, display_edge, display_matrix(1, X), display_edge.
 
+display_move(Move):-
+    write('CPU player played '), write(Move), write('.'), nl.
+
 
 %--------------------- Obter inputs --------------------%
 get_integer(Prompt, Min, Max, Option):-

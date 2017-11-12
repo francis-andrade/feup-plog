@@ -50,12 +50,24 @@ end_move(CurrentPlayer, NewBoard, OpponentPieces, 0):-
 	end_game(NewPlayer).
 
 end_move(CurrentPlayer, NewBoard, OpponentPieces, NewCurrentPieces):-
+    game_mode(1),
     switch_player(CurrentPlayer, NewPlayer),
     player_vs_player(NewBoard, OpponentPieces, NewCurrentPieces, NewPlayer).
+
+end_move(CurrentPlayer, NewBoard, OpponentPieces, NewCurrentPieces):-
+    game_mode(2),
+    switch_player(CurrentPlayer, NewPlayer),
+    player_vs_cpu(NewBoard, OpponentPieces, NewCurrentPieces, NewPlayer).
+
+end_move(CurrentPlayer, NewBoard, OpponentPieces, NewCurrentPieces):-
+    game_mode(3),
+    switch_player(CurrentPlayer, NewPlayer),
+    cpu_vs_cpu(NewBoard, OpponentPieces, NewCurrentPieces, NewPlayer).
 
 %ends game and asks if the player would like to play again
 end_game(Player):-
     write('Game over, winner is player '), write(Player), write('!'), nl,
-    abolish(game_mode),
+    abolish(game_mode/1), abolish(cpu_level/1),
     get_boolean('Would you like to return to the main menu? (yes/no)', Choice),
     return_to_main_menu(Choice).
+
