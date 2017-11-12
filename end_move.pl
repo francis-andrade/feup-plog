@@ -56,5 +56,6 @@ end_move(CurrentPlayer, NewBoard, OpponentPieces, NewCurrentPieces):-
 %ends game and asks if the player would like to play again
 end_game(Player):-
     write('Game over, winner is player '), write(Player), write('!'), nl,
+    abolish(game_mode),
     get_boolean('Would you like to return to the main menu? (yes/no)', Choice),
     return_to_main_menu(Choice).

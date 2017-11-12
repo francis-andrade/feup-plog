@@ -2,7 +2,7 @@
 :-include('display.pl').
 :-include('utils.pl').
 :-include('make_move.pl').
-:-include('check_win.pl').
+:-include('end_move.pl').
 :-include('cpu.pl').
 
 
@@ -17,15 +17,15 @@ shiftago:-
 menu_option(0).
 
 %starts player vs player
-menu_option(1):-
+menu_option(1):- assert(game_mode(1)),
     init(Board, PlayerOnePieces, PlayerTwoPieces),
     player_vs_player(Board, PlayerOnePieces, PlayerTwoPieces, 1).
 
 %starts player vs ai
-menu_option(2):- player_vs_cpu.
+menu_option(2):- assert(game_mode(2)), player_vs_cpu.
 
 %starts ai vs ai
-menu_option(3):- cpu_vs_cpu.
+menu_option(3):- assert(game_mode(2)), cpu_vs_cpu.
 
 %creates a blank board
 init([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0]], 22, 22).
@@ -46,7 +46,7 @@ return_to_main_menu(yes):-
 player_vs_player(Board, CurrentPieces, OpponentPieces, CurrentPlayer):-
     display_board(Board),
     write_pieces(CurrentPlayer, CurrentPieces),
-    insert_piece(Board, CurrentPlayer, NewBoard, CurrentPieces, OpponentPieces, NewCurrentPieces),
+    insert_piece(Board, CurrentPlayer, NewBoard, CurrentPieces, NewCurrentPieces),
     end_move(CurrentPlayer, NewBoard, OpponentPieces, NewCurrentPieces).
 
 %writes the number of pieces
@@ -63,7 +63,7 @@ write_pieces(Player, Pieces):-
 player_vs_cpu(Board, CurrentPieces, OpponentPieces, CurrentPlayer, CPUPlayer):-
     CurrentPlayer=CPUPlayer, !,
     display_board(Board),
-    cpu_move(Board, CurrentPlayer, Move, NewBoard, CurrentPieces, OpponentPieces, NewCurrentPieces),
+    cpu_move(Board, CurrentPlayer, Move, NewBoard, CurrentPieces, NewCurrentPieces),
     end_move(CurrentPlayer, NewBoard, OpponentPieces, NewCurrentPieces).
 
 
