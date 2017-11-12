@@ -79,6 +79,36 @@ replace_nth([_|Rest], 1, X, [X|Rest]).
 replace_nth([X|Rest], N, Elem, [X|NRest]):-
     N > 1, N1 is N-1, replace_nth(Rest, N1, Elem, NRest).
 
+create_list(Elem, 0, []):- !.
+
+create_list(Elem, N, List):-
+    List=[X | L2],
+    X=Elem,
+    N1 is N-1,
+    create_list(Elem, N1, L2).
+
+map_redefined(Pred, [], [], []):- ! .
+
+map_redefined(Pred, L1, L2, L3):-
+    L1=[X1 | L12],
+    L2=[X2 | L22],
+    L3=[X3 | L32],
+
+    call(Pred, X1, X2, X3),
+    map_redefined(Pred, L12, L22, L32).
+
+map_redefined(Pred, [], [], [], []):- ! .
+
+map_redefined(Pred, L1, L2, L3, L4):-
+    L1=[X1 | L12],
+    L2=[X2 | L22],
+    L3=[X3 | L32],
+    L4=[X4 | L42],
+    call(Pred, X1, X2, X3, X4),
+    map_redefined(Pred, L12, L22, L32, L42).
+    
+    
+
 
 %--------------------- Obter inputs --------------------%
 get_integer(Prompt, Min, Max, Option):-

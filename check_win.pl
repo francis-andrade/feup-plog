@@ -24,8 +24,8 @@ check_diagonals(Player,Board) :- get_diagonal(2,1,Board,[],Line), check_lines(Pl
 check_diagonals(Player,Board) :- get_diagonal(3,1,Board,[],Line), check_lines(Player,[Line]).
 
 %obtaining list with diagonal pieces
-get_diagonal(8, _, Board, Line, Line).
-get_diagonal(_, 8, Board, Line, Line).
+get_diagonal(8, _, Board, Line, Line):- ! .
+get_diagonal(_, 8, Board, Line, Line):- ! .
 get_diagonal(L, C, Board, Line, FLine):-
     L < 8, C < 8, L1 is L+1, C1 is C+1,
     get_line(L, Board, _tmp), nth1(C, _tmp, _value),
