@@ -45,7 +45,9 @@ fence:-
 solve(Lines, Columns):-
     segment_domain(Lines),
     segment_domain(Columns),
-    /* SCENE MISSING */
+    adjacent(Lines, Columns, 1, 1),
+    restrict(Lines, Columns, 1, 1),
+    % TODO criar apenas **UM** caminho
     labeling_matrix(Lines),
     labeling_matrix(Columns).
 
@@ -55,18 +57,42 @@ segment_domain([Line|Tail]):-
     segment_domain(Tail).
 
 
+%restrict(Lines, Columns, X, Y).
+restrict(_, _, _, 7).
+restrict(Lines, Columns, 7, Y) :- NewY is Y+1, restrict(Lines, Columns, 1, NewY).
+restrict(Lines, Columns, X, Y) :-
+    cell(X, Y, Limit),
+    NewX is X+1,
 
+    %top edge L(X, Y)
+    nth1(Y, Lines, LineT), element(X, LineT, Up),
+
+    %left edge C(X, Y) and right edge C(X+1, Y)
+    nth1(Y, Columns, Cols),
+    element(X, Cols, Left),
+    element(NewX, Cols, Right),
+
+    %bottom edge L(X, Y+1)
+    NewY is Y+1, nth1(NewY, Lines, LineB), element(X, LineB, Down),
+
+    %restrict and continue
+    Up + Down + Left + Right #= Limit,
+    restrict(Lines, Columns, NewX, Y).
+
+%adjacent(Lines, Columns, X, Y):-
 adjacent(_, _, _, 8).
 adjacent(Lines, Columns, 8, Y):- NewY is Y+1, adjacent(Lines, Columns, 1, NewY).
 adjacent(Lines, Columns, X, Y):-
-    %checking lines
+    %checking lines (example matrix is 7x6)
     nth1(Y, Lines, Line),
-    (X =< 6, element(X,Line, Right); X = 7, Right #= 0),
-    (X >= 2, PrevX is X-1, element(PrevX,Line, Left); X=1, Left #= 0),
+    (X =< 6, element(X, Line, Right); X = 7, Right #= 0),
+    (X >= 2, PrevX is X-1, element(PrevX, Line, Left); X=1, Left #= 0),
 
-    %checking columns
-    (Y >= 2, PrevY is Y-1, nth())
+    %checking columns (example matrix is 6x7)
+    (Y =< 5, nth1(Y, Columns, ColsDn), element(X, ColsDn, Down); Y = 6, Down #= 0)
+    (Y >= 2, PrevY is Y-1, nth1(PrevY, Columns, ColsUp), element(X, ColsUp, Up); Y = 1, Up #= 0),
 
+    %restricting and continuing to process the matrix (go through dots horizontally)
     (Left + Right + Up + Down #= 0 #\/ Left + Right + Up + Down #= 2) #<=> B,
     B #= 1,
     NewX is X+1,
