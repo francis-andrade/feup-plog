@@ -40,15 +40,22 @@ cell(6,6,2).
 
 fence:-
     lines(L), columns(C),
-    solve(L,C).
+    solve_puzzle(L,C).
 
-solve(Lines, Columns):-
+solve_puzzle(Lines, Columns):-
+    write('Solving puzzle...'), nl,
     segment_domain(Lines),
     segment_domain(Columns),
-    adjacent(Lines, Columns, 1, 1),
+    write('    1. Processed domains'), nl,
     findall(X-Y-L, cell(X, Y, L), Cells),
+    write('    2. Found all numbered cells and processed them'), nl,
     restrict(Lines, Columns, Cells),
+    write('    3. Restricted segments in numbered cells'), nl,
+    adjacent(Lines, Columns, 1, 1),
+    write('    4. Restricted adjacent segments'), nl,
     % TODO criar apenas **UM** caminho
+    %write('    5. Restricted path multiplicity to just one path'), nl,
+    write('Labeling variables...'), nl,
     labeling_matrix(Lines),
     labeling_matrix(Columns).
 
@@ -78,7 +85,7 @@ restrict(Lines, Columns, [X-Y-Limit|Tail]) :-
     Up + Down + Left + Right #= Limit,
     restrict(Lines, Columns, Tail).
 
-%adjacent(Lines, Columns, X, Y):-
+%adjacent(Lines, Columns, X, Y)
 adjacent(_, _, _, 8).
 adjacent(Lines, Columns, 8, Y):- NewY is Y+1, adjacent(Lines, Columns, 1, NewY).
 adjacent(Lines, Columns, X, Y):-
@@ -88,7 +95,7 @@ adjacent(Lines, Columns, X, Y):-
     (X >= 2, PrevX is X-1, element(PrevX, Line, Left); X=1, Left #= 0),
 
     %checking columns (example matrix is 6x7)
-    (Y =< 5, nth1(Y, Columns, ColsDn), element(X, ColsDn, Down); Y = 6, Down #= 0)
+    (Y =< 5, nth1(Y, Columns, ColsDn), element(X, ColsDn, Down); Y = 6, Down #= 0),
     (Y >= 2, PrevY is Y-1, nth1(PrevY, Columns, ColsUp), element(X, ColsUp, Up); Y = 1, Up #= 0),
 
     %restricting and continuing to process the matrix (go through dots horizontally)
