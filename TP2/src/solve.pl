@@ -46,7 +46,8 @@ solve(Lines, Columns):-
     segment_domain(Lines),
     segment_domain(Columns),
     adjacent(Lines, Columns, 1, 1),
-    restrict(Lines, Columns, 1, 1),
+    findall(X-Y-L, cell(X, Y, L), Cells),
+    restrict(Lines, Columns, Cells),
     % TODO criar apenas **UM** caminho
     labeling_matrix(Lines),
     labeling_matrix(Columns).
@@ -58,26 +59,24 @@ segment_domain([Line|Tail]):-
 
 
 %restrict(Lines, Columns, X, Y).
-restrict(_, _, _, 7).
-restrict(Lines, Columns, 7, Y) :- NewY is Y+1, restrict(Lines, Columns, 1, NewY).
-restrict(Lines, Columns, X, Y) :-
-    cell(X, Y, Limit),
+restrict(_, _, []).
+restrict(Lines, Columns, [X-Y-Limit|Tail]) :-
+    %checking horizontal edges - left C(X, Y) and right C(X+1, Y)
     NewX is X+1,
-
-    %top edge L(X, Y)
-    nth1(Y, Lines, LineT), element(X, LineT, Up),
-
-    %left edge C(X, Y) and right edge C(X+1, Y)
     nth1(Y, Columns, Cols),
     element(X, Cols, Left),
     element(NewX, Cols, Right),
 
-    %bottom edge L(X, Y+1)
-    NewY is Y+1, nth1(NewY, Lines, LineB), element(X, LineB, Down),
+    %checking vertical edges- up L(X, Y) and down L(X, Y+1)
+    NewY is Y+1,
+    nth1(Y, Lines, LineT),
+    nth1(NewY, Lines, LineB),
+    element(X, LineT, Up),
+    element(X, LineB, Down),
 
     %restrict and continue
     Up + Down + Left + Right #= Limit,
-    restrict(Lines, Columns, NewX, Y).
+    restrict(Lines, Columns, Tail).
 
 %adjacent(Lines, Columns, X, Y):-
 adjacent(_, _, _, 8).
