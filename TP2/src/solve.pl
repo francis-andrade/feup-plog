@@ -54,9 +54,23 @@ segment_domain([Line|Tail]):-
     domain(Line, 0, 1),
     segment_domain(Tail).
 
-adjacent_line(Line, Before, After).
-adjacent_column(Column, Before, After).
 
+
+adjacent(_, _, _, 8).
+adjacent(Lines, Columns, 8, Y):- NewY is Y+1, adjacent(Lines, Columns, 1, NewY).
+adjacent(Lines, Columns, X, Y):-
+    %checking lines
+    nth1(Y, Lines, Line),
+    (X =< 6, element(X,Line, Right); X = 7, Right #= 0),
+    (X >= 2, PrevX is X-1, element(PrevX,Line, Left); X=1, Left #= 0),
+
+    %checking columns
+    (Y >= 2, PrevY is Y-1, nth())
+
+    (Left + Right + Up + Down #= 0 #\/ Left + Right + Up + Down #= 2) #<=> B,
+    B #= 1,
+    NewX is X+1,
+    adjacent(Lines, Columns, NewX, Y).
 
 labeling_matrix([]).
 labeling_matrix([Line|Tail]):-
