@@ -1,5 +1,4 @@
-:-use_module(library(clpfd)).
-:-use_module(library(lists)).
+
 
 lines([
     [L1C1, L1C2, L1C3, L1C4, L1C5, L1C6],
