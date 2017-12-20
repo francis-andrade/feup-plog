@@ -37,7 +37,7 @@ cell(6,6,2).
 
 %-------------------------------------------------------------%
 
-fence:-
+debug_fence:-
     lines(L), columns(C),
     solve_puzzle(L,C).
 
@@ -46,7 +46,7 @@ solve_puzzle(Lines, Columns):-
     segment_domain(Lines),
     segment_domain(Columns),
     write('    1. Processed domains'), nl,
-    findall(X-Y-L, cell(X, Y, L), Cells),
+    findall(X-Y-L, cell(Y, X, L), Cells),
     write('    2. Found all numbered cells and processed them'), nl,
     restrict(Lines, Columns, Cells),
     write('    3. Restricted segments in numbered cells'), nl,
@@ -56,7 +56,8 @@ solve_puzzle(Lines, Columns):-
     %write('    5. Restricted path multiplicity to just one path'), nl,
     write('Labeling variables...'), nl,
     labeling_matrix(Lines),
-    labeling_matrix(Columns).
+    labeling_matrix(Columns),
+    write(Lines), nl, write(Columns).
 
 segment_domain([]).
 segment_domain([Line|Tail]):-
@@ -81,7 +82,7 @@ restrict(Lines, Columns, [X-Y-Limit|Tail]) :-
     element(X, LineB, Down),
 
     %restrict and continue
-    Up + Down + Left + Right #= Limit,
+    sum([Up, Down, Left, Right], #=, Limit),
     restrict(Lines, Columns, Tail).
 
 %adjacent(Lines, Columns, X, Y)
@@ -89,12 +90,13 @@ adjacent(_, _, _, 8).
 adjacent(Lines, Columns, 8, Y):- NewY is Y+1, adjacent(Lines, Columns, 1, NewY).
 adjacent(Lines, Columns, X, Y):-
     %checking lines (example matrix is 7x6)
+    %write('adjacent '), write(X), write(', '), write(Y), write(' ||'),
     nth1(Y, Lines, Line),
     (X =< 6, element(X, Line, Right); X = 7, Right #= 0),
     (X >= 2, PrevX is X-1, element(PrevX, Line, Left); X=1, Left #= 0),
 
     %checking columns (example matrix is 6x7)
-    (Y =< 5, nth1(Y, Columns, ColsDn), element(X, ColsDn, Down); Y = 6, Down #= 0),
+    (Y =< 6, nth1(Y, Columns, ColsDn), element(X, ColsDn, Down); Y = 7, Down #= 0),
     (Y >= 2, PrevY is Y-1, nth1(PrevY, Columns, ColsUp), element(X, ColsUp, Up); Y = 1, Up #= 0),
 
     %restricting and continuing to process the matrix (go through dots horizontally)
