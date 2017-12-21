@@ -105,6 +105,30 @@ adjacent(Lines, Columns, X, Y):-
     NewX is X+1,
     adjacent(Lines, Columns, NewX, Y).
 
+firstOne(Lines, Ind, [X , Y]):- length(Lines, Ind),!, X #= 0, Y #=0 . 
+	
+firstOne(Lines, Ind, [X , Y]):-
+	Ind1 is Ind + 1,
+	element(Ind, Lines, Line),
+	((element(Y, Line, 1) , Ind #= X);
+	 firstOne(Lines, Ind1, [X , Y])).
+
+nextVertice([X, Y, 'L'],[X + 1, Y]):- ! . 
+nextVertice([X, Y, 'C'],[X , Y + 1]):- ! . 
+	 
+/*loopSize(Lines, Columns, [[X, Y] | [[Xant, Yant] | Tail]]):-
+	X #= 1, Y #=1, 
+	element(Y, Lines, Line),
+	element(X, Line, Right),
+	
+	element(Y, Columns, Column),
+	element(X, Column, Down),
+	
+	nextVertice(
+*/	
+	 
+	
+	
 labeling_matrix([]).
 labeling_matrix([Line|Tail]):-
     labeling([ff], Line),
