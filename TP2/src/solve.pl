@@ -113,19 +113,74 @@ firstOne(Lines, Ind, [X , Y]):-
 	((element(Y, Line, 1) , Ind #= X);
 	 firstOne(Lines, Ind1, [X , Y])).
 
-nextVertice([X, Y, 'L'],[X + 1, Y]):- ! . 
-nextVertice([X, Y, 'C'],[X , Y + 1]):- ! . 
-	 
-/*loopSize(Lines, Columns, [[X, Y] | [[Xant, Yant] | Tail]]):-
-	X #= 1, Y #=1, 
-	element(Y, Lines, Line),
-	element(X, Line, Right),
+
+nextVertice([X, Y], [Xant, Yant],[Xnext, Ynext], [_Left, Right, Up, Down]):-
+	Xant #= X - 1, Yant #= Y, !,
+	(Right #= 1, Xnext #= X + 1, Ynext #= Y);
+	(Up #= 1, Ynext #= Y - 1, Xnext #= X);
+	(Down #= 1, Ynext #= Y + 1, Xnext #= X).
+
+nextVertice([X, Y], [Xant, Yant],[Xnext, Ynext], [Left, _Right, Up, Down]):-
+	Xant #= X + 1, Yant #= Y, !,
+	(Left #= 1, Xnext #= X - 1, Ynext #= Y);
+	(Up #= 1, Ynext #= Y - 1, Xnext #= X);
+	(Down #= 1, Ynext #= Y + 1, Xnext #= X).
+
+nextVertice([X, Y], [Xant, Yant],[Xnext, Ynext], [Left, Right, _Up, Down]):-
+	Xant #= X, Yant #= Y - 1, !,
+	(Right #= 1, Xnext #= X + 1, Ynext #= Y);
+	(Left #= 1, Xnext #= X - 1, Ynext #= Y);
+	(Down #= 1, Ynext #= Y + 1, Xnext #= X).
+
+nextVertice([X, Y], [Xant, Yant],[Xnext, Ynext], [Left, Right, Up, _Down]):-
+	Xant #= X, Yant #= Y + 1, !,
+	(Right #= 1, Xnext #= X + 1, Ynext #= Y);
+	(Left #= 1, Xnext #= X - 1, Ynext #= Y);
+	(Up #= 1, Ynext #= Y - 1, Xnext #= X).	
+
+calculateSize_aux(Lines, Ind, TmpSize, Size):-
+	length(Lines, NLines),
+	Ind #= NLines + 1, !, TmpSize #= Size .
+
+calculateSize_aux(Lines, Ind, TmpSize, Size):-
+	element(Lines, Ind, Line),
+	count(1, Line, #=, Amount), 
+	NewSize #= TmpSize + Amount,
+	Ind1 #= Ind + 1,
+	calculateSize_aux(Lines, Ind1, NewSize, Size).	
 	
-	element(Y, Columns, Column),
-	element(X, Column, Down),
 	
-	nextVertice(
-*/	
+calculateSize(Lines, Columns, Size):-
+	calculateSize_aux(Lines, 1, 0, LSize),
+	calculateSize_aux(Columns, 1, 0, CSize),
+	LSize + CSize #= Size .
+		
+	
+loopSize(Lines, Columns, [[X, Y] | [[_Xant, _Yant] | Tail]]):-
+		length(Tail, TailN), TailN #> 0,
+		element(TailN, Tail, TailFirst),
+		[X, Y] #= TailFirst, !,
+		calculateSize(Lines, Columns, Size),
+		TailN + 2 #= Size .
+		
+		
+	
+loopSize(Lines, Columns, [[X, Y] | [[Xant, Yant] | Tail]]):-
+	length(Lines, NLines),
+	nth1(Y, Lines, Line), length(Line, NLine),
+	
+    (X =< NLine, element(X, Line, Right); X = NLine, Right #= 0),
+    (X >= 2, PrevX is X-1, element(PrevX, Line, Left); X=1, Left #= 0),
+
+    %checking columns (example matrix is 6x7)
+    (Y =< NLines, nth1(Y, Columns, ColsDn), element(X, ColsDn, Down); Y = NLines, Down #= 0),
+    (Y >= 2, PrevY is Y-1, nth1(PrevY, Columns, ColsUp), element(X, ColsUp, Up); Y = 1, Up #= 0),
+
+    %restricting and continuing to process the matrix (go through dots horizontally)
+    Left + Right + Up + Down #= 2,
+	nextVertice([X, Y], [Xant, Yant], [Xnext, Ynext], [Left, Right, Up, Down]),
+	loopSize(Lines, Columns, [[Xnext, Ynext] | [[X, Y] | [[Xant, Yant] | Tail]]]).
+	
 	 
 	
 	
