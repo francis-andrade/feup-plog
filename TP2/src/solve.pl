@@ -2,8 +2,6 @@
 
 %-------------------------------------------------------------%
 
-
-
 solve_puzzle(NL, NC, Lines, Columns):-
     write('Solving puzzle...'), nl,
     Mult is NL * (NC - 1) + NC * (NL - 1),
@@ -11,21 +9,23 @@ solve_puzzle(NL, NC, Lines, Columns):-
 	domain(Vars, 0, 1),
 	convert(Vars, NL, NC, Lines , Columns),
     write('    1. Processed domains'), nl,
-    findall(X-Y-L, cell(Y, X, L), Cells), 
+    findall(X-Y-L, (cell(Y, X, L), X > 0), Cells), 
     write('    2. Found all numbered cells and processed them'), nl,
     restrict(Lines, Columns, Cells),
     write('    3. Restricted segments in numbered cells'), nl,
     adjacent(Lines, Columns, 1, 1),
     write('    4. Restricted adjacent segments'), nl,
-    % TODO criar apenas **UM** caminho
-	firstOne(Lines, 1, [XF, YF]), XF1 #= XF + 1,
-	loop(Lines, Columns, [[XF1, YF],[XF, YF]]),
-    write('    5. Restricted path multiplicity to just one path'), nl,
+	%firstOne(Lines, 1, [XF, YF]), XF1 #= XF + 1,
+	%element(XL, Vars, 1), XL #=< NL * (NC - 1), YF #= (XL / (NC - 1)) + 1, XF #= XL mod (NC - 1), XF1 #= XF + 1,    
+	%loop(Lines, Columns, [[XF1, YF],[XF, YF]]),write('b2'),
+    write('    5. Restricted path multiplicity to just one path'), nl,	
     write('Labeling variables...'), nl,
 	%calculateSize(Lines, Columns, Size),
-	count(1, Vars, #=, Size),
-	maximize(labeling([], Vars), Size),
-    write('The maximum Size is: '), write(Size), nl . 
+	labeling([], Vars),
+	firstOne(Lines, 1, [XF, YF]), XF1 #= XF + 1
+	,loop(Lines, Columns, [[XF1, YF],[XF, YF]])
+	%,firstOne(Lines, 1, [XF, YF]), XF1 #= XF + 1
+	. 
 
 subset_aux(_List, _Indice, Length, Sublist, Sublist_aux):-
 	length(Sublist_aux, Length), !,
@@ -130,7 +130,8 @@ firstOne(Lines, Ind, [X , Y]):-
 	firstOne_aux(Line, X, 1),  Ind #= Y, ! .
 	
 firstOne(Lines, Ind, [X , Y]):-
-	Ind1 is Ind + 1,
+	%write(
+	Ind1 #= Ind + 1,
 	firstOne(Lines, Ind1, [X , Y]).	
 
 

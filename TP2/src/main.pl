@@ -6,13 +6,16 @@
 :-dynamic cell/3 .
 
 fence:-
-    get_arguments(NL, NC, P),
+    get_arguments(NL, NC, P), 
 	abolish(cell/3),
+	assert(cell(0,0,0)),
 	assertCell(P),
 	nl, write('Puzzle Restrictions: '),nl, 
-	display_puzzle(NL, NC, P, 1), 
-	solve_puzzle(NL, NC, Lines, Columns),
-    display_puzzle(NL, NC, Lines, Columns, 1).
+	display_puzzle(NL, NC, P, 1), !, 
+	((solve_puzzle(NL, NC, Lines, Columns),
+	write('\nSolution: '),nl, 
+    display_puzzle(NL, NC, Lines, Columns, 1));
+	(write('\nThe puzzle does not have any solutions'))).
 
 display_point(1):- !,
 	write('.').
@@ -95,15 +98,15 @@ get_arguments(NL, NC, P):-
 
 get_puzzle(NL, NC, P):-
 	NC1 is NC - 1, NL1 is NL - 1,
-	write('Line Cell (Press 0 if you have finished adding restrictions to the grid)'),
-	get_integer(LC, 0, NL1), (
-	(LC = 0, P = []);
-	(write('Column Cell (Press 0 if you have finished adding restrictions to the grid)'),
-	get_integer(CC, 0, NC1), (
-	(CC = 0, P = []);
-	(write('Amount of line segments used by that cell (Press -1 if you have finished adding restrictions to the grid)'),
-	get_integer(A, -1, 4), (
-	(A = -1, P =[]) ;
+	write('Line Cell (Press f if you have finished adding restrictions to the grid)'),
+	get_integer(LC, 1, NL1), (
+	(LC = 'f', P = []);
+	(write('Column Cell (Press f if you have finished adding restrictions to the grid)'),
+	get_integer(CC, 1, NC1), (
+	(CC = 'f', P = []);
+	(write('Amount of line segments used by that cell (Press f if you have finished adding restrictions to the grid)'),
+	get_integer(A, 0, 4), (
+	(A = 'f', P =[]) ;
 	 ( P = [[LC, CC, A] | P2] , get_puzzle(NL, NC, P2))))))).
 
 get_dimensions(NL, NC) :-
@@ -112,13 +115,20 @@ get_dimensions(NL, NC) :-
 		write('Type the number of columns in the board'),
 		get_integer(NC, 1, 10000).
 
+		
 
 get_integer(I,Min, Max):-
-	read(N), isinteger(N, N2, Min, Max),
+	read(N),
+	((N = 'f',I = 'f'); 
+	(isinteger(N, N2, Min, Max),
 	(
-	(integer(N) , N =< Max, N >= Min, N = I);
-	(integer(N2), N2 =< Max, N2 >= Min, N2 = I)).
+	(((integer(N) ,N =< Max, N >= Min) ; N = 'f'), N = I);
+	(((integer(N2), N2 =< Max, N2 >= Min) ; N2 = 'f'), N2 = I)))).
 
+integer_aux(I):-
+	I = 'f' ;
+	integer(I).
+	
 isinteger(I, _I2,Min, Max) :-
 	integer(I), I =< Max , I >= Min .
 
