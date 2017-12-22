@@ -38,30 +38,30 @@ cell(6,6,2).
 %-------------------------------------------------------------%
 
 debug_fence:-
-    solve_puzzle(7,7).
+    solve_puzzle(7,7, Lines, Columns),
+	display_puzzle(7, 7, Lines, Columns, 1).
 
-solve_puzzle(NL, NC):-
+solve_puzzle(NL, NC, Lines, Columns):-
     write('Solving puzzle...'), nl,
     Mult is NL * (NC - 1) + NC * (NL - 1),
 	length(Vars, Mult),
 	domain(Vars, 0, 1),
 	convert(Vars, NL, NC, Lines , Columns),
     write('    1. Processed domains'), nl,
-    findall(X-Y-L, cell(Y, X, L), Cells), write(Cells),
+    findall(X-Y-L, cell(Y, X, L), Cells), 
     write('    2. Found all numbered cells and processed them'), nl,
     restrict(Lines, Columns, Cells),
     write('    3. Restricted segments in numbered cells'), nl,
     adjacent(Lines, Columns, 1, 1),
     write('    4. Restricted adjacent segments'), nl,
     % TODO criar apenas **UM** caminho
-	
+	firstOne(Lines, 1, [XF, YF]), XF1 #= XF + 1,
+	loop(Lines, Columns, [[XF1, YF],[XF, YF]]),
     write('    5. Restricted path multiplicity to just one path'), nl,
     write('Labeling variables...'), nl,
 	calculateSize(Lines, Columns, Size),
 	labeling([ff, maximize(Size)], Vars),
-	write(Vars),nl,
-    write(Lines), nl, write(Columns),nl, write(Size), nl,
-	display_puzzle(7, 7, Lines, Columns, 1), false.
+    write('Size: '), write(Size), nl . 
 
 /*debug_fence:-
     lines(L), columns(C),
@@ -148,17 +148,30 @@ restrict(Lines, Columns, [X-Y-Limit|Tail]) :-
     restrict(Lines, Columns, Tail).
 
 %adjacent(Lines, Columns, X, Y)
-adjacent(_, _, _, 8).
-adjacent(Lines, Columns, 8, Y):- NewY is Y+1, adjacent(Lines, Columns, 1, NewY).
+adjacent(Lines, _, _, Y):- length(Lines, Y1),  Y1 #= Y - 1, ! .
+
+adjacent(Lines, Columns, X, Y):- 
+	nth1(Y, Lines, Line), 
+	length(Line, NLine1), 
+	X #= NLine1 + 2, !,
+	NewY is Y + 1, adjacent(Lines, Columns, 1, NewY).
+
+
+/*adjacent(_, _, _, 8).
+
+adjacent(Lines, Columns, 8, Y):- NewY is Y+1, adjacent(Lines, Columns, 1, NewY).	*/
+	
 adjacent(Lines, Columns, X, Y):-
+	length(Lines, NLines),
+	nth1(Y, Lines, Line), length(Line, NLine1), NLine #= NLine1 + 1,
     %checking lines (example matrix is 7x6)
     %write('adjacent '), write(X), write(', '), write(Y), write(' ||'),
     nth1(Y, Lines, Line),
-    (X =< 6, element(X, Line, Right); X = 7, Right #= 0),
+    (X < NLine, element(X, Line, Right); X = NLine, Right #= 0),
     (X >= 2, PrevX is X-1, element(PrevX, Line, Left); X=1, Left #= 0),
 
     %checking columns (example matrix is 6x7)
-    (Y =< 6, nth1(Y, Columns, ColsDn), element(X, ColsDn, Down); Y = 7, Down #= 0),
+    (Y < NLines, nth1(Y, Columns, ColsDn), element(X, ColsDn, Down); Y = NLines, Down #= 0),
     (Y >= 2, PrevY is Y-1, nth1(PrevY, Columns, ColsUp), element(X, ColsUp, Up); Y = 1, Up #= 0),
 
     %restricting and continuing to process the matrix (go through dots horizontally)
@@ -167,38 +180,53 @@ adjacent(Lines, Columns, X, Y):-
     NewX is X+1,
     adjacent(Lines, Columns, NewX, Y).
 
-firstOne(Lines, Ind, [X , Y]):- length(Lines, Ind),!, X #= 0, Y #=0 . 
+
+	
+
+firstOne_aux(Line, _X, X_aux):- 
+	length(Line, X1), X_aux #= X1 + 1,!, false.
+	
+firstOne_aux(Line, X, X_aux):-
+	element(X_aux, Line, 1), ! ,X #= X_aux.
+
+firstOne_aux(Line, X, X_aux):-
+	X1 #= X_aux + 1,
+	firstOne_aux(Line,X, X1) .   
+	
+firstOne(Lines, Ind, [_X , _Y]):- length(Lines, Ind1), Ind1 #= Ind - 1,!, false . 
+	
+firstOne(Lines, Ind, [X , Y]):-
+	nth1(Ind, Lines, Line), 
+	firstOne_aux(Line, X, 1),  Ind #= Y, ! .
 	
 firstOne(Lines, Ind, [X , Y]):-
 	Ind1 is Ind + 1,
-	element(Ind, Lines, Line),
-	((element(Y, Line, 1) , Ind #= X);
-	 firstOne(Lines, Ind1, [X , Y])).
+	firstOne(Lines, Ind1, [X , Y]).	
 
 
 nextVertice([X, Y], [Xant, Yant],[Xnext, Ynext], [_Left, Right, Up, Down]):-
 	Xant #= X - 1, Yant #= Y, !,
-	(Right #= 1, Xnext #= X + 1, Ynext #= Y);
+	((Right #= 1, Xnext #= X + 1, Ynext #= Y);
 	(Up #= 1, Ynext #= Y - 1, Xnext #= X);
-	(Down #= 1, Ynext #= Y + 1, Xnext #= X).
+	(Down #= 1, Ynext #= Y + 1, Xnext #= X)).
 
 nextVertice([X, Y], [Xant, Yant],[Xnext, Ynext], [Left, _Right, Up, Down]):-
 	Xant #= X + 1, Yant #= Y, !,
-	(Left #= 1, Xnext #= X - 1, Ynext #= Y);
+	((Left #= 1, Xnext #= X - 1, Ynext #= Y);
 	(Up #= 1, Ynext #= Y - 1, Xnext #= X);
-	(Down #= 1, Ynext #= Y + 1, Xnext #= X).
+	(Down #= 1, Ynext #= Y + 1, Xnext #= X)).
 
 nextVertice([X, Y], [Xant, Yant],[Xnext, Ynext], [Left, Right, _Up, Down]):-
 	Xant #= X, Yant #= Y - 1, !,
-	(Right #= 1, Xnext #= X + 1, Ynext #= Y);
+	((Right #= 1, Xnext #= X + 1, Ynext #= Y);
 	(Left #= 1, Xnext #= X - 1, Ynext #= Y);
-	(Down #= 1, Ynext #= Y + 1, Xnext #= X).
+	(Down #= 1, Ynext #= Y + 1, Xnext #= X)).
 
 nextVertice([X, Y], [Xant, Yant],[Xnext, Ynext], [Left, Right, Up, _Down]):-
 	Xant #= X, Yant #= Y + 1, !,
-	(Right #= 1, Xnext #= X + 1, Ynext #= Y);
+	((Right #= 1, Xnext #= X + 1, Ynext #= Y);
 	(Left #= 1, Xnext #= X - 1, Ynext #= Y);
-	(Up #= 1, Ynext #= Y - 1, Xnext #= X).	
+	(Up #= 1, Ynext #= Y - 1, Xnext #= X)).	
 
 calculateSize_aux(Lines, Ind, TmpSize, Size):-
 	length(Lines, NLines),
@@ -218,30 +246,35 @@ calculateSize(Lines, Columns, Size):-
 	LSize + CSize #= Size .
 		
 	
-loopSize(Lines, Columns, [[X, Y] | [[_Xant, _Yant] | Tail]]):-
-		length(Tail, TailN), TailN #> 0,
-		element(TailN, Tail, TailFirst),
-		[X, Y] #= TailFirst, !,
-		calculateSize(Lines, Columns, Size),
-		TailN + 2 #= Size .
+loop(Lines, Columns, [[X, Y] | [[_Xant, _Yant] | Tail]]):-
+		%write([X,Y]),nl,
+		length(Tail, TailN),TailN #> 0, 
+		nth1(TailN, Tail, TailFirst), 
+		[X,Y] = TailFirst,!,
+		calculateSize(Lines, Columns, Size), 
+		%write(Size), write(TailN),
+		Size #= TailN + 1 
+		.
 		
 		
 	
-loopSize(Lines, Columns, [[X, Y] | [[Xant, Yant] | Tail]]):-
+loop(Lines, Columns, [[X, Y] | [[Xant, Yant] | Tail]]):-
+	%write([X,Y]),nl,
 	length(Lines, NLines),
-	nth1(Y, Lines, Line), length(Line, NLine),
+	nth1(Y, Lines, Line), length(Line, NLine1), NLine #= NLine1 + 1,
 	
-    (X =< NLine, element(X, Line, Right); X = NLine, Right #= 0),
+    (X < NLine, element(X, Line, Right); X = NLine, Right #= 0),
     (X >= 2, PrevX is X-1, element(PrevX, Line, Left); X=1, Left #= 0),
 
     %checking columns (example matrix is 6x7)
-    (Y =< NLines, nth1(Y, Columns, ColsDn), element(X, ColsDn, Down); Y = NLines, Down #= 0),
+    (Y < NLines, nth1(Y, Columns, ColsDn), element(X, ColsDn, Down); Y = NLines, Down #= 0),
     (Y >= 2, PrevY is Y-1, nth1(PrevY, Columns, ColsUp), element(X, ColsUp, Up); Y = 1, Up #= 0),
 
     %restricting and continuing to process the matrix (go through dots horizontally)
     Left + Right + Up + Down #= 2,
+	%write(nextVertice([X, Y], [Xant, Yant], [Xnext, Ynext], [Left, Right, Up, Down])),
 	nextVertice([X, Y], [Xant, Yant], [Xnext, Ynext], [Left, Right, Up, Down]),
-	loopSize(Lines, Columns, [[Xnext, Ynext] | [[X, Y] | [[Xant, Yant] | Tail]]]).
+	loop(Lines, Columns, [[Xnext, Ynext] | [[X, Y] | [[Xant, Yant] | Tail]]]).
 	
 	 
 	
@@ -313,3 +346,38 @@ testsol4 :-
 		E1 #= 1,
 		labeling([ff], L),
 		write(L), false.
+
+testsol5:-
+	L = [
+    [1, 1, 1, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 1, 1],
+    [0, 0, 0, 0, 1, 1]
+],
+	C =
+    [
+    [1, 0, 0, 1, 0, 0, 0],
+    [1, 0, 0, 1, 0, 0, 0],
+    [1, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 1, 1]
+],
+display_puzzle(7, 7, L, C, 1),
+firstOne(L, 1, [Xant, Yant]), 
+write([Xant, Yant]),nl,
+X #= Xant + 1,
+loop(L, C, [[X, Yant] | [[Xant, Yant] | []]]) 
+.
+
+testsol6:-
+Vars = [0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,1,0,0,0,1,0,1,1,0,1,0,0,1,1,1,1,0,1,0,0,0,1,1,0,1,1,1,0,0,0,0,1,1,0,0,0,1,1,1,1,0,1,1,1,0,0,1,0,1,0,0,1,0,0,0,0,1,0,0,0,0,1,1,0,1,1,0,0,1],
+
+convert(Vars, 7, 7, L, C),
+display_puzzle(7, 7, L, C, 1),
+firstOne(L, 1, [Xant, Yant]), 
+X #= Xant + 1,
+loop(L, C, [[X, Yant] | [[Xant, Yant] | []]]).
