@@ -1,45 +1,8 @@
 
 
-lines([
-    [L1C1, L1C2, L1C3, L1C4, L1C5, L1C6],
-    [L2C1, L2C2, L2C3, L2C4, L2C5, L2C6],
-    [L3C1, L3C2, L3C3, L3C4, L3C5, L3C6],
-    [L4C1, L4C2, L4C3, L4C4, L4C5, L4C6],
-    [L5C1, L5C2, L5C3, L5C4, L5C5, L5C6],
-    [L6C1, L6C2, L6C3, L6C4, L6C5, L6C6],
-    [L7C1, L7C2, L7C3, L7C4, L7C5, L7C6]
-]).
-
-columns([
-    [C1L1, C2L1, C3L1, C4L1, C5L1, C6L1, C7L1],
-    [C1L2, C2L2, C3L2, C4L2, C5L2, C6L2, C7L2],
-    [C1L3, C2L3, C3L3, C4L3, C5L3, C6L3, C7L3],
-    [C1L4, C2L4, C3L4, C4L4, C5L4, C6L4, C7L4],
-    [C1L5, C2L5, C3L5, C4L5, C5L5, C6L5, C7L5],
-    [C1L6, C2L6, C3L6, C4L6, C5L6, C6L6, C7L6]
-]).
-
-%cell(Line, Column, Value).
-cell(1,1,0).
-cell(1,2,0).
-cell(1,4,1).
-cell(1,6,1).
-cell(2,6,1).
-cell(3,1,3).
-cell(3,3,1).
-cell(4,4,3).
-cell(4,6,1).
-cell(5,1,3).
-cell(6,1,3).
-cell(6,3,3).
-cell(6,5,1).
-cell(6,6,2).
-
 %-------------------------------------------------------------%
 
-debug_fence:-
-    solve_puzzle(7,7, Lines, Columns),
-	display_puzzle(7, 7, Lines, Columns, 1).
+
 
 solve_puzzle(NL, NC, Lines, Columns):-
     write('Solving puzzle...'), nl,
@@ -52,7 +15,7 @@ solve_puzzle(NL, NC, Lines, Columns):-
     write('    2. Found all numbered cells and processed them'), nl,
     restrict(Lines, Columns, Cells),
     write('    3. Restricted segments in numbered cells'), nl,
-    adjacent(Lines, Columns, 1, 1),
+    %adjacent(Lines, Columns, 1, 1),
     write('    4. Restricted adjacent segments'), nl,
     % TODO criar apenas **UM** caminho
 	firstOne(Lines, 1, [XF, YF]), XF1 #= XF + 1,
@@ -61,31 +24,7 @@ solve_puzzle(NL, NC, Lines, Columns):-
     write('Labeling variables...'), nl,
 	calculateSize(Lines, Columns, Size),
 	labeling([ff, maximize(Size)], Vars),
-    write('Size: '), write(Size), nl . 
-
-/*debug_fence:-
-    lines(L), columns(C),
-    solve_puzzle(L,C).	
-	
-solve_puzzle(Lines, Columns):-
-    write('Solving puzzle...'), nl,
-    segment_domain(Lines),
-    segment_domain(Columns),
-    write('    1. Processed domains'), nl,
-    findall(X-Y-L, cell(Y, X, L), Cells), write(Cells),
-    write('    2. Found all numbered cells and processed them'), nl,
-    restrict(Lines, Columns, Cells),
-    write('    3. Restricted segments in numbered cells'), nl,
-    adjacent(Lines, Columns, 1, 1),
-    write('    4. Restricted adjacent segments'), nl,
-    % TODO criar apenas **UM** caminho
-    %write('    5. Restricted path multiplicity to just one path'), nl,
-    write('Labeling variables...'), nl,
-	calculateSize(Lines, Columns, Size),
-    labeling_matrix(Lines, Size),
-    labeling_matrix(Columns, Size),
-    write(Lines), nl, write(Columns),nl,
-	display_puzzle(7, 7, Lines, Columns, 1), false.	*/
+    write('The maximum Size is: '), write(Size), nl . 
 
 subset_aux(_List, _Indice, Length, Sublist, Sublist_aux):-
 	length(Sublist_aux, Length), !,
@@ -121,14 +60,9 @@ convert_aux(_Vars,_L, _C, Lines, Columns, Lines_aux, Columns_aux, _Ind):-
 convert(Vars,L, C, Lines,Columns):-
 	convert_aux(Vars, L, C, Lines, Columns, [],[], 1).
 	
-segment_domain([]).
-segment_domain([Line|Tail]):-
-    domain(Line, 0, 1),
-    segment_domain(Tail).
-
 
 %restrict(Lines, Columns, X, Y).
-restrict(_, _, []).
+restrict(_, _, []):- ! .
 restrict(Lines, Columns, [X-Y-Limit|Tail]) :-
     %checking horizontal edges - left C(X, Y) and right C(X+1, Y)
     NewX is X+1,
@@ -156,10 +90,6 @@ adjacent(Lines, Columns, X, Y):-
 	X #= NLine1 + 2, !,
 	NewY is Y + 1, adjacent(Lines, Columns, 1, NewY).
 
-
-/*adjacent(_, _, _, 8).
-
-adjacent(Lines, Columns, 8, Y):- NewY is Y+1, adjacent(Lines, Columns, 1, NewY).	*/
 	
 adjacent(Lines, Columns, X, Y):-
 	length(Lines, NLines),
@@ -175,8 +105,7 @@ adjacent(Lines, Columns, X, Y):-
     (Y >= 2, PrevY is Y-1, nth1(PrevY, Columns, ColsUp), element(X, ColsUp, Up); Y = 1, Up #= 0),
 
     %restricting and continuing to process the matrix (go through dots horizontally)
-    (Left + Right + Up + Down #= 0 #\/ Left + Right + Up + Down #= 2) #<=> B,
-    B #= 1,
+    Left + Right + Up + Down #= 0 #\/ Left + Right + Up + Down #= 2,
     NewX is X+1,
     adjacent(Lines, Columns, NewX, Y).
 
@@ -278,106 +207,5 @@ loop(Lines, Columns, [[X, Y] | [[Xant, Yant] | Tail]]):-
 	
 	 
 	
-	
-labeling_matrix([]).
-labeling_matrix([Line|Tail]):-
-    labeling([ff], Line),
-    labeling_matrix(Tail).
-	
 
-testsol1:-
-	L = [
-    [1, 1, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [1, 1, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 1, 1],
-    [0, 0, 0, 0, 1, 1]
-],
-	C =
-    [
-    [1, 0, 0, 1, 0, 0, 0],
-    [1, 0, 0, 1, 0, 0, 0],
-    [1, 0, 0, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 1, 1]
-],
-	
-	Vars = 
-	[1, 1, 1, 0, 0, 0,
-    0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0,
-    1, 1, 1, 0, 0, 0,
-    0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 1, 1,
-    0, 0, 0, 0, 1, 1,
-	1, 0, 0, 1, 0, 0, 0,
-    1, 0, 0, 1, 0, 0, 0,
-    1, 0, 0, 1, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 1, 1],
-	
-	convert(Vars, 7, 7, LT, CT),
-	write(LT),nl, write(CT),
-	LT = L,
-	CT = C .
-	
-testsol2 :-
-	domain([X], 1, 2), X = Y, Y = 2,
-	labeling([], [X]),
-	write(X), false.
 
-testsol3 :-
-	X = Y, X = 3,
-	write(Y).
-	
-testsol4 :-
-		length(L, 3),
-		domain(L, 1, 3),
-		reverse(L2 , L),
-		element(1, L2, E1),
-		element(2, L2, E2),
-		element(3, L2, E3),
-		E3 #= 3,
-		E2 #= 2, 
-		E1 #= 1,
-		labeling([ff], L),
-		write(L), false.
-
-testsol5:-
-	L = [
-    [1, 1, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [1, 1, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 1, 1],
-    [0, 0, 0, 0, 1, 1]
-],
-	C =
-    [
-    [1, 0, 0, 1, 0, 0, 0],
-    [1, 0, 0, 1, 0, 0, 0],
-    [1, 0, 0, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 1, 1]
-],
-display_puzzle(7, 7, L, C, 1),
-firstOne(L, 1, [Xant, Yant]), 
-write([Xant, Yant]),nl,
-X #= Xant + 1,
-loop(L, C, [[X, Yant] | [[Xant, Yant] | []]]) 
-.
-
-testsol6:-
-Vars = [0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,1,0,0,0,1,0,1,1,0,1,0,0,1,1,1,1,0,1,0,0,0,1,1,0,1,1,1,0,0,0,0,1,1,0,0,0,1,1,1,1,0,1,1,1,0,0,1,0,1,0,0,1,0,0,0,0,1,0,0,0,0,1,1,0,1,1,0,0,1],
-
-convert(Vars, 7, 7, L, C),
-display_puzzle(7, 7, L, C, 1),
-firstOne(L, 1, [Xant, Yant]), 
-X #= Xant + 1,
-loop(L, C, [[X, Yant] | [[Xant, Yant] | []]]).

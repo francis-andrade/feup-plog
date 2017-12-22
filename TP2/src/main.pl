@@ -1,17 +1,16 @@
 :-use_module(library(clpfd)).
 :-use_module(library(lists)).
 :-include('solve.pl').
+:-include('test.pl').
 
 :-dynamic cell/3 .
 
 fence:-
     get_arguments(NL, NC, P),
 	assertCell(P),
-	display_puzzle(NL, NC, P, 1).
-	/*,
-    display_puzzle(M),
-    solve(L,C),
-    display_puzzle(L)*/
+	display_puzzle(NL, NC, P, 1), 
+	solve(NL, NC, Lines, Columns),
+    display_puzzle(NL, NC, Lines, Columns, 1).
 
 display_point(1):- !,
 	write('.').
@@ -137,77 +136,4 @@ isinteger(_I, I2 ,Min, Max) :-
 	write('Your input must be a number. Please type again '),
 	get_integer(I2,Min, Max).
 
-test1:-
-	P = [[1,1,0],[1,2,0],/*[1,3,0],[1,4,0],*/[1,5,0],[4,5,2]],
-	display_point(7),write('\n'),
-	display_restriction(7, P, 1, 1).
 
-test2:-
-	P = [[1,1,0],[1,2,0],[1,5,2],[4,5,2]],
-	display_puzzle(7, 7, P, 1).
-
-/*
-Lines
-
-[
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0]
-]
-
-Columns
-  [
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0]
-]
-*/
-
-test31:-
-	L = [
-    [1, 1, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [1, 1, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 1, 1],
-    [0, 0, 0, 0, 1, 1]
-],
-	C =
-    [
-    [1, 0, 0, 1, 0, 0, 0],
-    [1, 0, 0, 1, 0, 0, 0],
-    [1, 0, 0, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 1, 1]
-],
-	display_lines(7, L, C, 1, 1).
-
-test3:-
-	L = [
-    [1, 1, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [1, 1, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 1, 1],
-    [0, 0, 0, 0, 1, 1]
-],
-	C =
-    [
-    [1, 0, 0, 1, 0, 0, 0],
-    [1, 0, 0, 1, 0, 0, 0],
-    [1, 0, 0, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 1, 1]
-],
-display_puzzle(7, 7, L, C, 1).
