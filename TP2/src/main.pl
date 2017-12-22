@@ -2,6 +2,8 @@
 :-use_module(library(lists)).
 :-include('solve.pl').
 
+:-dynamic cell/3 .
+
 fence:-
     get_arguments(NL, NC, P),
 	assertCell(P),
@@ -71,7 +73,8 @@ display_lines(NC, L, C, IndLine, IndCol):-
 	display_lines(NC, L, C, IndLine, IndCol1).
 
 
-
+display_puzzle(NL, _NC, _L, _C, Ind):- Ind is NL + 1, ! . 
+	
 display_puzzle(NL, NC, L, C, Ind):-
 	display_lines(NC, L, C, Ind, 1), Ind1 is Ind +1,
 	write('\n'),
@@ -81,7 +84,7 @@ display_puzzle(NL, NC, L, C, Ind):-
 assertCell([]):- !.
 
 assertCell( [[Arg1, Arg2, Arg3]| P2]):-
-	assert(cell(Arg1, Arg2, Arg3)),
+	asserta(cell(Arg1, Arg2, Arg3)),
 	assertCell(P2).
 
 

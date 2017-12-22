@@ -38,15 +38,41 @@ cell(6,6,2).
 %-------------------------------------------------------------%
 
 debug_fence:-
-    lines(L), columns(C),
-    solve_puzzle(L,C).
+    solve_puzzle(7,7).
 
+solve_puzzle(NL, NC):-
+    write('Solving puzzle...'), nl,
+    Mult is NL * (NC - 1) + NC * (NL - 1),
+	length(Vars, Mult),
+	domain(Vars, 0, 1),
+	convert(Vars, NL, NC, Lines , Columns),
+    write('    1. Processed domains'), nl,
+    findall(X-Y-L, cell(Y, X, L), Cells), write(Cells),
+    write('    2. Found all numbered cells and processed them'), nl,
+    restrict(Lines, Columns, Cells),
+    write('    3. Restricted segments in numbered cells'), nl,
+    adjacent(Lines, Columns, 1, 1),
+    write('    4. Restricted adjacent segments'), nl,
+    % TODO criar apenas **UM** caminho
+	
+    write('    5. Restricted path multiplicity to just one path'), nl,
+    write('Labeling variables...'), nl,
+	calculateSize(Lines, Columns, Size),
+	labeling([ff, maximize(Size)], Vars),
+	write(Vars),nl,
+    write(Lines), nl, write(Columns),nl, write(Size), nl,
+	display_puzzle(7, 7, Lines, Columns, 1), false.
+
+/*debug_fence:-
+    lines(L), columns(C),
+    solve_puzzle(L,C).	
+	
 solve_puzzle(Lines, Columns):-
     write('Solving puzzle...'), nl,
     segment_domain(Lines),
     segment_domain(Columns),
     write('    1. Processed domains'), nl,
-    findall(X-Y-L, cell(Y, X, L), Cells),
+    findall(X-Y-L, cell(Y, X, L), Cells), write(Cells),
     write('    2. Found all numbered cells and processed them'), nl,
     restrict(Lines, Columns, Cells),
     write('    3. Restricted segments in numbered cells'), nl,
@@ -55,10 +81,46 @@ solve_puzzle(Lines, Columns):-
     % TODO criar apenas **UM** caminho
     %write('    5. Restricted path multiplicity to just one path'), nl,
     write('Labeling variables...'), nl,
-    labeling_matrix(Lines),
-    labeling_matrix(Columns),
-    write(Lines), nl, write(Columns).
+	calculateSize(Lines, Columns, Size),
+    labeling_matrix(Lines, Size),
+    labeling_matrix(Columns, Size),
+    write(Lines), nl, write(Columns),nl,
+	display_puzzle(7, 7, Lines, Columns, 1), false.	*/
 
+subset_aux(_List, _Indice, Length, Sublist, Sublist_aux):-
+	length(Sublist_aux, Length), !,
+	reverse(Sublist, Sublist_aux) .
+
+subset_aux(List, Indice, Length, Sublist, Sublist_aux):-
+	element(Indice, List, Elem),
+	Ind1 #= Indice + 1,
+	subset_aux(List, Ind1, Length, Sublist, [Elem | Sublist_aux]).
+	
+subset(List, InitialIndice, Length, Sublist):-
+	subset_aux(List, InitialIndice, Length, Sublist, []).
+	
+	
+convert_aux(Vars,L, C, Lines, Columns, Lines_aux, Columns_aux, Ind):-
+	Mult #= L * (C - 1),
+	Ind #=< Mult, !, C1 is C - 1,
+	subset(Vars, Ind, C1, SVars),
+	Indnew #= Ind + C1,
+	convert_aux(Vars, L, C, Lines, Columns, [SVars | Lines_aux], Columns_aux, Indnew).
+
+convert_aux(Vars,L, C, Lines, Columns, Lines_aux, Columns_aux, Ind):-
+	Mult #= L * (C - 1) + C * (L - 1),
+	Ind #=< Mult, !,
+	subset(Vars, Ind, C, SVars),
+	Indnew #= Ind + C,
+	convert_aux(Vars, L, C, Lines, Columns, Lines_aux, [SVars | Columns_aux], Indnew).	
+
+convert_aux(_Vars,_L, _C, Lines, Columns, Lines_aux, Columns_aux, _Ind):-
+	reverse(Lines_aux, Lines),
+	reverse(Columns_aux, Columns).
+	
+convert(Vars,L, C, Lines,Columns):-
+	convert_aux(Vars, L, C, Lines, Columns, [],[], 1).
+	
 segment_domain([]).
 segment_domain([Line|Tail]):-
     domain(Line, 0, 1),
@@ -143,7 +205,7 @@ calculateSize_aux(Lines, Ind, TmpSize, Size):-
 	Ind #= NLines + 1, !, TmpSize #= Size .
 
 calculateSize_aux(Lines, Ind, TmpSize, Size):-
-	element(Lines, Ind, Line),
+	nth1(Ind, Lines, Line),
 	count(1, Line, #=, Amount), 
 	NewSize #= TmpSize + Amount,
 	Ind1 #= Ind + 1,
@@ -188,3 +250,66 @@ labeling_matrix([]).
 labeling_matrix([Line|Tail]):-
     labeling([ff], Line),
     labeling_matrix(Tail).
+	
+
+testsol1:-
+	L = [
+    [1, 1, 1, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 1, 1],
+    [0, 0, 0, 0, 1, 1]
+],
+	C =
+    [
+    [1, 0, 0, 1, 0, 0, 0],
+    [1, 0, 0, 1, 0, 0, 0],
+    [1, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 1, 1]
+],
+	
+	Vars = 
+	[1, 1, 1, 0, 0, 0,
+    0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0,
+    1, 1, 1, 0, 0, 0,
+    0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 1, 1,
+    0, 0, 0, 0, 1, 1,
+	1, 0, 0, 1, 0, 0, 0,
+    1, 0, 0, 1, 0, 0, 0,
+    1, 0, 0, 1, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 1, 1],
+	
+	convert(Vars, 7, 7, LT, CT),
+	write(LT),nl, write(CT),
+	LT = L,
+	CT = C .
+	
+testsol2 :-
+	domain([X], 1, 2), X = Y, Y = 2,
+	labeling([], [X]),
+	write(X), false.
+
+testsol3 :-
+	X = Y, X = 3,
+	write(Y).
+	
+testsol4 :-
+		length(L, 3),
+		domain(L, 1, 3),
+		reverse(L2 , L),
+		element(1, L2, E1),
+		element(2, L2, E2),
+		element(3, L2, E3),
+		E3 #= 3,
+		E2 #= 2, 
+		E1 #= 1,
+		labeling([ff], L),
+		write(L), false.
