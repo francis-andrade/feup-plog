@@ -15,7 +15,7 @@ solve_puzzle(NL, NC, Lines, Columns):-
     write('    2. Found all numbered cells and processed them'), nl,
     restrict(Lines, Columns, Cells),
     write('    3. Restricted segments in numbered cells'), nl,
-    %adjacent(Lines, Columns, 1, 1),
+    adjacent(Lines, Columns, 1, 1),
     write('    4. Restricted adjacent segments'), nl,
     % TODO criar apenas **UM** caminho
 	firstOne(Lines, 1, [XF, YF]), XF1 #= XF + 1,

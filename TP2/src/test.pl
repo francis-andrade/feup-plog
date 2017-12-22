@@ -1,5 +1,6 @@
 debug_fence1:-
 	%cell(Line, Column, Value).
+	abolish(cell/3),
 	asserta(cell(1,1,0)),
 	asserta(cell(1,2,0)),
 	asserta(cell(1,4,1)),
@@ -20,20 +21,19 @@ debug_fence1:-
 
 debug_fence2:-
 	%cell(Line, Column, Value).
-	asserta(cell(1,1,0)),
-	asserta(cell(1,2,0)),
-	asserta(cell(1,4,1)),
-	asserta(cell(1,6,1)),
-	asserta(cell(2,6,1)),
-	asserta(cell(3,1,3)),
+	abolish(cell/3),
+	asserta(cell(1,5,0)),
+	asserta(cell(2,1,3)),
+	asserta(cell(2,2,3)),
+	asserta(cell(2,5,3)),
 	asserta(cell(3,3,1)),
-	asserta(cell(4,4,3)),
-	asserta(cell(4,6,1)),
-	asserta(cell(5,1,3)),
-	asserta(cell(6,1,3)),
-	asserta(cell(6,3,3)),
-	asserta(cell(6,5,1)),
-	asserta(cell(6,6,2)),
+	asserta(cell(3,4,2)),
+	asserta(cell(4,3,2)),
+	asserta(cell(4,4,0)),
+	asserta(cell(5,2,1)),
+	asserta(cell(5,5,1)),
+	asserta(cell(5,6,1)),
+	asserta(cell(6,2,2)),
     solve_puzzle(7,7, Lines, Columns),
 	display_puzzle(7, 7, Lines, Columns, 1).	
 
