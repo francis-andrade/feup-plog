@@ -22,8 +22,9 @@ solve_puzzle(NL, NC, Lines, Columns):-
 	loop(Lines, Columns, [[XF1, YF],[XF, YF]]),
     write('    5. Restricted path multiplicity to just one path'), nl,
     write('Labeling variables...'), nl,
-	calculateSize(Lines, Columns, Size),
-	labeling([ff, maximize(Size)], Vars),
+	%calculateSize(Lines, Columns, Size),
+	count(1, Vars, #=, Size),
+	maximize(labeling([], Vars), Size),
     write('The maximum Size is: '), write(Size), nl . 
 
 subset_aux(_List, _Indice, Length, Sublist, Sublist_aux):-

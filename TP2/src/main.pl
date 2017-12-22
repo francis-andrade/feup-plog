@@ -7,9 +7,11 @@
 
 fence:-
     get_arguments(NL, NC, P),
+	abolish(cell/3),
 	assertCell(P),
+	nl, write('Puzzle Restrictions: '),nl, 
 	display_puzzle(NL, NC, P, 1), 
-	solve(NL, NC, Lines, Columns),
+	solve_puzzle(NL, NC, Lines, Columns),
     display_puzzle(NL, NC, Lines, Columns, 1).
 
 display_point(1):- !,
