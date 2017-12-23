@@ -1,5 +1,5 @@
 %------------------------------------------------TESTS--------------------------------------------------------
-%In this module there are several tests with predefined puzzle
+%In this module there are several tests with predefined puzzles
 debug_fence1:-
 	abolish(cell/3),
 	P = [
@@ -22,6 +22,7 @@ debug_fence1:-
 	nl, write('Puzzle Restrictions'),nl,
 	display_puzzle(7, 7, P, 1),
     solve_puzzle(7,7, Lines, Columns),
+	fd_statistics,
 	nl, write('Solution: '),nl,
 	display_puzzle(7, 7, Lines, Columns, 1).
 	
@@ -44,6 +45,7 @@ debug_fence2:-
 	nl, write('Puzzle Restrictions: '),nl,
 	display_puzzle(7, 7, P, 1),
     solve_puzzle(7,7, Lines, Columns),
+	fd_statistics,
 	nl, write('Solution: '),nl,
 	display_puzzle(7, 7, Lines, Columns, 1).	
 
@@ -55,6 +57,7 @@ debug_fence3:-
 	nl, write('Puzzle Restrictions: '),nl,
 	display_puzzle(4, 2, P, 1),
     solve_puzzle(4,2, Lines, Columns),
+	fd_statistics,
 	nl, write('Solution: '),nl, 
 	display_puzzle(4, 2, Lines, Columns, 1).
 	

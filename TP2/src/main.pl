@@ -1,3 +1,5 @@
+:-dynamic cell/3 .
+
 :-use_module(library(clpfd)).
 :-use_module(library(lists)).
 :- use_module(library(random)).
@@ -5,14 +7,14 @@
 :-include('test.pl').
 :-include('user_interface.pl').
 
-:-dynamic cell/3 .
+
 
 %main function
 fence:-
     display_main_menu, 
 	get_integer(Option, 0, 2),!,
-	menu_options(Option),
-	fd_statistics.
+	menu_options(Option).
+	
 
 %exits game	
 menu_options(0).

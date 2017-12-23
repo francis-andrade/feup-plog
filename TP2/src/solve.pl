@@ -17,9 +17,9 @@ solve_puzzle(NL, NC, Lines, Columns):-
     write('    4. Restricted adjacent segments'), nl,
     write('    5. Restricted path multiplicity to just one path'), nl,	
     write('Labeling variables...'), nl,
-	labeling([], Vars),
+	labeling([], Vars),	
 	firstOne(Lines, 1, [XF, YF]), XF1 #= XF + 1
-	,loop(Lines, Columns, [[XF1, YF],[XF, YF]])
+	,loop(Lines, Columns, [[XF1, YF],[XF, YF]])	
 	. 
 
 %----------------------------------SUBSET--------------------------------------------
