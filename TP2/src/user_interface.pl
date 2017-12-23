@@ -1,7 +1,7 @@
 %displays the main menu
 display_main_menu:-
 		display_options, nl .
-	
+
 %displays the menu options
 display_options:-
     write('+------------------------------------+'), nl,
@@ -11,7 +11,7 @@ display_options:-
     write('+------------------------------------+').
 
 
-%--------------------------------------------------------DISPLAY_PUZZLE------------------------------------------------------------
+%---------------------- DISPLAY_PUZZLE ----------------------%
 %This version of display_puzzle displays the puzzle restrictions
 display_point(1):- !,
 	write('.').
@@ -22,7 +22,7 @@ display_point(L):-
 	display_point(L1).
 
 display_restriction(NC, _P, _IndLine, IndCol) :- IndCol is NC + 1 ,! .
-	display_restriction(NC, P, IndLine, IndCol):-
+display_restriction(NC, P, IndLine, IndCol):-
 	member([IndLine, IndCol, Amount], P), !,
 	write(' '),
 	write(Amount),
@@ -43,49 +43,71 @@ display_puzzle(NL, NC, P, Ind):-
 	write('\n'), Ind1 is Ind + 1,
 	display_puzzle(NL, NC, P, Ind1).
 
-%--------------------------------------------------------DISPLAY_PUZZLE------------------------------------------------------------
-%This version of display_puzzle displays the final solution	
-display_line_aux(NC, _L, _IndLine, NC):- ! .
+%---------------------- DISPLAY_PUZZLE ----------------------%
+%This version of display_puzzle displays the final solution
+display_puzzle([LineElem1, LineElem2], [ColElem], Cells, IndL, IndC):-
+	display_line(LineElem1),
+	display_columns(ColElem, Cells, IndL, IndC),
+	display_line(LineElem2).
 
-display_line_aux(_NC,L, IndLine, IndCol):-
-	nth1(IndLine, L, LineIndL),
-	nth1(IndCol, LineIndL, 0),!,
-	write(' ').
+display_puzzle([LineElem|LT], [ColElem|CT], Cells, IndL, IndC):-
+	display_line(LineElem),
+	display_columns(ColElem, Cells, IndL, IndC),
+	NewIndL is IndL+1,
+	display_puzzle(LT, CT, Cells, NewIndL, IndC).
 
-display_line_aux(_NC, L, IndLine, IndCol):-
-	nth1(IndLine, L, LineIndL),
-	nth1(IndCol, LineIndL, 1),!,
-	write('_').
+display_line([Elem]):-
+	write('+'),
+	(Elem = 0, write('   '); Elem = 1, write('---')),
+	write('+'), nl.
 
-display_line(NC, _L, _C, _IndLine, IndCol):- IndCol is NC + 1, ! .
+display_line([Elem|T]):-
+	write('+'),
+	(Elem = 0, write('   '); Elem = 1, write('---')),
+	display_line(T).
 
-display_line(NC, L, C, IndLine, IndCol):-
-	IndL1 is IndLine -1,
-	nth1(IndL1, C, ColIndL),
-	nth1(IndCol, ColIndL, 1), !,
-	write('|'),display_line_aux(NC, L, IndLine, IndCol),
-	IndCol1 is IndCol + 1,
-	display_line(NC, L, C, IndLine, IndCol1).
+display_columns([Elem], Cells, IndL, IndC):-
+	(Elem = 0, write(' '); Elem = 1, write('|')), nl.
 
-display_line(NC, L, C, IndLine, IndCol):-
-	write(' '),display_line_aux(NC, L, IndLine, IndCol),
-	IndCol1 is IndCol + 1,
-	display_line(NC, L, C, IndLine, IndCol1).
+display_columns([Elem|T], Cells, IndL, IndC):-
+	member([IndL, IndC, Amount], Cells), !,
+	(Elem = 0, write(' '); Elem = 1, write('|')),
+	write(' '), write(Amount), write(' '),
+	NewIndC is IndC + 1,
+	display_columns(T, Cells, IndL, NewIndC).
+
+display_columns([Elem|T], Cells, IndL, IndC):-
+	(Elem = 0, write(' '); Elem = 1, write('|')),
+	write('   '),
+	NewIndC is IndC + 1,
+	display_columns(T, Cells, IndL, NewIndC).
 
 
-display_puzzle(NL, _NC, _L, _C, Ind):- Ind is NL + 1, ! . 
-	
-display_puzzle(NL, NC, L, C, Ind):-
-	display_line(NC, L, C, Ind, 1), Ind1 is Ind +1,
-	write('\n'),
-	display_puzzle(NL, NC,L,C, Ind1).
+create_empty(NL,NC,ZeroedL,ZeroedC):-
+	AuxNC is NC-1, AuxNL is NL-1,
+	create_list(NL, AuxNC, ZeroedL),
+	create_list(AuxNC, NL, ZeroedC).
 
-%Asks the user for the arguments of the puzzle (i.e. its dimensions and restrictions)	
+create_list(N, L, List):- create_list(N, L, [], List).
+create_list(0, _, List, List).
+create_list(N, L, Accum, List):-
+	NewN is N-1, build_value(0, L, Temp),
+	append(Accum, [Temp], Accum2),
+	create_list(NewN, L, Accum2, List).
+
+build_value(X, L, List)  :-
+	length(List, L),
+	maplist(=(X), List).
+
+
+%--------------------------------------------------%
+
+%Asks the user for the arguments of the puzzle (i.e. its dimensions and restrictions)
 get_arguments(NL, NC, P):-
 	get_dimensions(NL, NC),
 	get_restrictions(NL, NC, P).
 
-%Asks the user for the puzzle restrictions	
+%Asks the user for the puzzle restrictions
 get_restrictions(NL, NC, P):-
 	NC1 is NC - 1, NL1 is NL - 1,
 	write('Line Cell (Press f if you have finished adding restrictions to the grid)'),
@@ -102,21 +124,21 @@ get_restrictions(NL, NC, P):-
 %Asks the user the dimensions of the puzzle
 get_dimensions(NL, NC) :-
 		write('\nType the number of lines in the board: '),
-		get_integer(NL, 2, 10000), 
+		get_integer(NL, 2, 10000),
 		write('Type the number of columns in the board'),
 		get_integer(NC, 2, 10000).
 
-		
+
 %---------------------------------------------GET_INTEGER-----------------------------------------------
 %Asks the user for an integer in a certain interval
 get_integer(I,Min, Max):-
 	read(N),
-	((N = 'f',I = 'f'); 
+	((N = 'f',I = 'f');
 	(isinteger(N, N2, Min, Max),
 	(
 	(((integer(N) ,N =< Max, N >= Min) ; N = 'f'), N = I);
 	(((integer(N2), N2 =< Max, N2 >= Min) ; N2 = 'f'), N2 = I)))).
-	
+
 isinteger(I, _I2,Min, Max) :-
 	integer(I), I =< Max , I >= Min .
 
