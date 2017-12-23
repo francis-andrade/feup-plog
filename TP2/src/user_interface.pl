@@ -66,7 +66,7 @@ display_line([Elem|T]):-
 	(Elem = 0, write('   '); Elem = 1, write('---')),
 	display_line(T).
 
-display_columns([Elem], Cells, IndL, IndC):-
+display_columns([Elem], _Cells, _IndL, _IndC):-
 	(Elem = 0, write(' '); Elem = 1, write('|')), nl.
 
 display_columns([Elem|T], Cells, IndL, IndC):-
