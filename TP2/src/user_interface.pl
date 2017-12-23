@@ -82,31 +82,6 @@ display_columns([Elem|T], Cells, IndL, IndC):-
 	NewIndC is IndC + 1,
 	display_columns(T, Cells, IndL, NewIndC).
 
-/*
-create_empty(NL,NC,ZeroedL,ZeroedC):-
-	AuxNC is NC-1, AuxNL is NL-1,
-	create_list(NL, AuxNC, ZeroedL),
-	create_list(AuxNC, NL, ZeroedC).
-
-create_list(N, L, List):- create_list(N, L, [], List).
-create_list(0, _, List, List).
-create_list(N, L, Accum, List):-
-	N>0, NewN is N-1, build_value(0, L, Temp),
-	append(Accum, [Temp], Accum2),
-	create_list(NewN, L, Accum2, List).
-
-build_value(X, L, List):- build_value(X, L, [], List).
-build_value(_, 0, List, List).
-build_value(X, L, Accum, List):-
-	L>0, NewL is L-1,
-	append(Accum, [X], Accum2),
-	build_value(X, NewL,Accum2, List).
-
-build_value(X, L, List)  :-
-	length(List, L),
-	maplist(=(X), List).
-*/
-
 %--------------------------------------------------%
 
 %Asks the user for the arguments of the puzzle (i.e. its dimensions and restrictions)
