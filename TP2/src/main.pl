@@ -2,7 +2,8 @@
 
 :-use_module(library(clpfd)).
 :-use_module(library(lists)).
-:- use_module(library(random)).
+:-use_module(library(random)).
+:-use_module(library(between)).
 :-include('solve.pl').
 :-include('test.pl').
 :-include('user_interface.pl').
@@ -26,8 +27,7 @@ menu_options(1):-
 	asserta(cell(0,0,0)),
 	assertCell(P),
 	nl, write('Puzzle Restrictions: '),nl,
-	create_empty(NL,NC,ZeroedL,ZeroedC),
-	display_puzzle(ZeroedL, ZeroedC, P, 1, 1), !,
+	display_puzzle(NL, NC, P, 1), !,
 	((solve_puzzle(NL, NC, Lines, Columns),
 	write('\nSolution: '),nl,
 	display_puzzle(Lines, Columns, P, 1, 1));
@@ -42,8 +42,7 @@ menu_options(2):-
 	asserta(cell(0,0,0)),
 	assertCell(P),
 	nl, write('Puzzle Restrictions: '),nl,
-	create_empty(NL,NC,ZeroedL,ZeroedC),
-	display_puzzle(ZeroedL, ZeroedC, P, 1, 1), !,
+	display_puzzle(NL, NC, P, 1), !,
 	((solve_puzzle(NL, NC, Lines, Columns),
 	write('\nSolution: '),nl,
 	display_puzzle(Lines, Columns, P, 1, 1));
