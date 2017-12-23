@@ -1,151 +1,86 @@
 :-use_module(library(clpfd)).
 :-use_module(library(lists)).
+:- use_module(library(random)).
 :-include('solve.pl').
 :-include('test.pl').
+:-include('user_interface.pl').
 
 :-dynamic cell/3 .
 
+%main function
 fence:-
-    get_arguments(NL, NC, P), 
+    display_main_menu, 
+	get_integer(Option, 0, 2),!,
+	menu_options(Option),
+	fd_statistics.
+
+%exits game	
+menu_options(0).
+
+%asks the user to input the puzzle restrictions	
+menu_options(1):-
+	get_arguments(NL, NC, P), 
 	abolish(cell/3),
-	assert(cell(0,0,0)),
+	asserta(cell(0,0,0)),
 	assertCell(P),
 	nl, write('Puzzle Restrictions: '),nl, 
 	display_puzzle(NL, NC, P, 1), !, 
 	((solve_puzzle(NL, NC, Lines, Columns),
 	write('\nSolution: '),nl, 
     display_puzzle(NL, NC, Lines, Columns, 1));
-	(write('\nThe puzzle does not have any solutions'))).
+	(write('\nThe puzzle does not have any solutions.'))),nl.
 
-display_point(1):- !,
-	write('.').
-
-display_point(L):-
-	L > 1,
-	write('. '), L1 is L - 1,
-	display_point(L1).
-
-display_restriction(NC, _P, _IndLine, IndCol) :- IndCol is NC + 1 ,! .
-
-
-	display_restriction(NC, P, IndLine, IndCol):-
-	member([IndLine, IndCol, Amount], P), !,
-	write(' '),
-	write(Amount),
-	IndCol1 is IndCol + 1,
-	display_restriction(NC, P, IndLine, IndCol1).
-
-display_restriction(NC, P, IndLine, IndCol):-
-	write('  '),
-	IndCol1 is IndCol + 1,
-	display_restriction(NC, P, IndLine, IndCol1).
-
-display_puzzle(NL, _NC, _P, Ind):- Ind is NL + 1, ! .
-
-display_puzzle(NL, NC, P, Ind):-
-	display_point(NC),
-	write('\n'),
-	display_restriction(NC,  P, Ind, 1),
-	write('\n'), Ind1 is Ind + 1,
-	display_puzzle(NL, NC, P, Ind1).
-
-display_lines_aux(NC, _L, _IndLine, NC):- ! .
-
-display_lines_aux(_NC,L, IndLine, IndCol):-
-	nth1(IndLine, L, LineIndL),
-	nth1(IndCol, LineIndL, 0),!,
-	write(' ').
-
-display_lines_aux(_NC, L, IndLine, IndCol):-
-	nth1(IndLine, L, LineIndL),
-	nth1(IndCol, LineIndL, 1),!,
-	write('_').
-
-display_lines(NC, _L, _C, _IndLine, IndCol):- IndCol is NC + 1, ! .
-
-display_lines(NC, L, C, IndLine, IndCol):-
-	IndL1 is IndLine -1,
-	nth1(IndL1, C, ColIndL),
-	nth1(IndCol, ColIndL, 1), !,
-	write('|'),display_lines_aux(NC, L, IndLine, IndCol),
-	IndCol1 is IndCol + 1,
-	display_lines(NC, L, C, IndLine, IndCol1).
-
-display_lines(NC, L, C, IndLine, IndCol):-
-	write(' '),display_lines_aux(NC, L, IndLine, IndCol),
-	IndCol1 is IndCol + 1,
-	display_lines(NC, L, C, IndLine, IndCol1).
-
-
-display_puzzle(NL, _NC, _L, _C, Ind):- Ind is NL + 1, ! . 
+%generates the puzzle in a semi-random way	
+menu_options(2):-
+	generate_puzzle(NL, NC, P),
+	write('Number of Lines: '), write(NL), nl,
+	write('Number of Columns: '), write(NC),nl,
+	abolish(cell/3),
+	asserta(cell(0,0,0)),
+	assertCell(P),
+	nl, write('Puzzle Restrictions: '),nl, 
+	display_puzzle(NL, NC, P, 1), !, 
+	((solve_puzzle(NL, NC, Lines, Columns),
+	write('\nSolution: '),nl, 
+    display_puzzle(NL, NC, Lines, Columns, 1));
+	(write('\nThe puzzle does not have any solutions.'))),nl.	
 	
-display_puzzle(NL, NC, L, C, Ind):-
-	display_lines(NC, L, C, Ind, 1), Ind1 is Ind +1,
-	write('\n'),
-	display_puzzle(NL, NC,L,C, Ind1).
+	
+%--------------------- GENERATE_PUZZLE ----------------------%
+%Generates a puzzle in a semi-random fashion	
+generate_puzzle_aux(NL, _NC, P, P_aux, IndL,_IndC):- IndL = NL, !, P = P_aux .
+generate_puzzle_aux(NL, NC, P, P_aux, IndL,IndC):- IndC = NC, !,IndL1 is IndL + 1, generate_puzzle_aux(NL, NC, P, P_aux, IndL1, 1).
+generate_puzzle_aux(NL, NC, P, P_aux, IndL,IndC):- 
+	IndC1 is IndC + 1,
+	random(0, 100, Amount),
+	(
+	(Amount > 20,!,  generate_puzzle_aux(NL, NC, P, P_aux, IndL,IndC1)) ;
+	(Amount = 20, !,
+	generate_puzzle_aux(NL, NC, P, [[IndL, IndC, 4] | P_aux], IndL,IndC1)
+	);
+	(Amount > 17, !,
+	generate_puzzle_aux(NL, NC, P, [[IndL, IndC, 3] | P_aux], IndL,IndC1)
+	);
+	(Amount > 13, !,
+	generate_puzzle_aux(NL, NC, P, [[IndL, IndC, 2] | P_aux], IndL,IndC1)
+	);
+	(Amount > 6, !,
+	generate_puzzle_aux(NL, NC, P, [[IndL, IndC, 1] | P_aux], IndL,IndC1)
+	);
+	generate_puzzle_aux(NL, NC, P, [[IndL, IndC, 0] | P_aux], IndL,IndC1)
+	).
+				
+generate_puzzle(NL, NC, P):-
+	random(2, 8, NL),
+	random(2, 8, NC),
+	generate_puzzle_aux(NL, NC, P, [], 1, 1).
 
 
+%asserts the restrictions of the puzzle	
 assertCell([]):- !.
 
 assertCell( [[Arg1, Arg2, Arg3]| P2]):-
 	asserta(cell(Arg1, Arg2, Arg3)),
 	assertCell(P2).
-
-
-get_arguments(NL, NC, P):-
-	get_dimensions(NL, NC),
-	get_puzzle(NL, NC, P).
-
-get_puzzle(NL, NC, P):-
-	NC1 is NC - 1, NL1 is NL - 1,
-	write('Line Cell (Press f if you have finished adding restrictions to the grid)'),
-	get_integer(LC, 1, NL1), (
-	(LC = 'f', P = []);
-	(write('Column Cell (Press f if you have finished adding restrictions to the grid)'),
-	get_integer(CC, 1, NC1), (
-	(CC = 'f', P = []);
-	(write('Amount of line segments used by that cell (Press f if you have finished adding restrictions to the grid)'),
-	get_integer(A, 0, 4), (
-	(A = 'f', P =[]) ;
-	 ( P = [[LC, CC, A] | P2] , get_puzzle(NL, NC, P2))))))).
-
-get_dimensions(NL, NC) :-
-		write('Type the number of lines in the board: '),
-		get_integer(NL, 1, 10000),
-		write('Type the number of columns in the board'),
-		get_integer(NC, 1, 10000).
-
-		
-
-get_integer(I,Min, Max):-
-	read(N),
-	((N = 'f',I = 'f'); 
-	(isinteger(N, N2, Min, Max),
-	(
-	(((integer(N) ,N =< Max, N >= Min) ; N = 'f'), N = I);
-	(((integer(N2), N2 =< Max, N2 >= Min) ; N2 = 'f'), N2 = I)))).
-
-integer_aux(I):-
-	I = 'f' ;
-	integer(I).
-	
-isinteger(I, _I2,Min, Max) :-
-	integer(I), I =< Max , I >= Min .
-
-isinteger(I, I2,Min, Max) :-
-	integer(I), I < Min,
-	write('Your input must be greater or equal to '), write(Min),
-	write('. Please type again '),
-	get_integer(I2, Min, Max).
-
-isinteger(I, I2,Min, Max):-
-	integer(I), I > Max,
-	write('Your input must be smaller or equal to '), write(Max),
-	write('. Please type again '),
-	get_integer(I2,Min, Max).
-
-isinteger(_I, I2 ,Min, Max) :-
-	write('Your input must be a number. Please type again '),
-	get_integer(I2,Min, Max).
 
 
