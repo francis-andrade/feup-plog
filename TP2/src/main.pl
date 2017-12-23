@@ -58,7 +58,7 @@ generate_puzzle_aux(NL, NC, P, P_aux, IndL,IndC):-
 	(
 	(Amount > 20,!,  generate_puzzle_aux(NL, NC, P, P_aux, IndL,IndC1)) ;
 	(Amount = 20, !,
-	generate_puzzle_aux(NL, NC, P, [[IndL, IndC, 4] | P_aux], IndL,IndC1)
+	generate_puzzle_aux(NL, NC, P, [[IndL, IndC, 3] | P_aux], IndL,IndC1)
 	);
 	(Amount > 17, !,
 	generate_puzzle_aux(NL, NC, P, [[IndL, IndC, 3] | P_aux], IndL,IndC1)
