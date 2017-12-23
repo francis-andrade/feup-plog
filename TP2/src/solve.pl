@@ -1,7 +1,7 @@
 
 
 %-------------------------------------------------------------%
-
+%solves puzzle (main function of this module) 
 solve_puzzle(NL, NC, Lines, Columns):-
     write('Solving puzzle...'), nl,
     Mult is NL * (NC - 1) + NC * (NL - 1),
@@ -15,18 +15,15 @@ solve_puzzle(NL, NC, Lines, Columns):-
     write('    3. Restricted segments in numbered cells'), nl,
     adjacent(Lines, Columns, 1, 1),
     write('    4. Restricted adjacent segments'), nl,
-	%firstOne(Lines, 1, [XF, YF]), XF1 #= XF + 1,
-	%element(XL, Vars, 1), XL #=< NL * (NC - 1), YF #= (XL / (NC - 1)) + 1, XF #= XL mod (NC - 1), XF1 #= XF + 1,    
-	%loop(Lines, Columns, [[XF1, YF],[XF, YF]]),write('b2'),
     write('    5. Restricted path multiplicity to just one path'), nl,	
     write('Labeling variables...'), nl,
-	%calculateSize(Lines, Columns, Size),
 	labeling([], Vars),
 	firstOne(Lines, 1, [XF, YF]), XF1 #= XF + 1
 	,loop(Lines, Columns, [[XF1, YF],[XF, YF]])
-	%,firstOne(Lines, 1, [XF, YF]), XF1 #= XF + 1
 	. 
 
+%----------------------------------SUBSET--------------------------------------------
+%Finds a sublist of the main list	
 subset_aux(_List, _Indice, Length, Sublist, Sublist_aux):-
 	length(Sublist_aux, Length), !,
 	reverse(Sublist, Sublist_aux) .
@@ -39,7 +36,9 @@ subset_aux(List, Indice, Length, Sublist, Sublist_aux):-
 subset(List, InitialIndice, Length, Sublist):-
 	subset_aux(List, InitialIndice, Length, Sublist, []).
 	
-	
+
+%----------------------------------CONVERT--------------------------------------------
+%Converts a list of variables into two matrices Lines and Columns		
 convert_aux(Vars,L, C, Lines, Columns, Lines_aux, Columns_aux, Ind):-
 	Mult #= L * (C - 1),
 	Ind #=< Mult, !, C1 is C - 1,
@@ -62,7 +61,8 @@ convert(Vars,L, C, Lines,Columns):-
 	convert_aux(Vars, L, C, Lines, Columns, [],[], 1).
 	
 
-%restrict(Lines, Columns, X, Y).
+%----------------------------------Restrict---------------------------------------------------------------
+%Applies restrictions so that the number of adjacent edges to each intersection is the one predetermined
 restrict(_, _, []):- ! .
 restrict(Lines, Columns, [X-Y-Limit|Tail]) :-
     %checking horizontal edges - left C(X, Y) and right C(X+1, Y)
@@ -82,7 +82,8 @@ restrict(Lines, Columns, [X-Y-Limit|Tail]) :-
     sum([Up, Down, Left, Right], #=, Limit),
     restrict(Lines, Columns, Tail).
 
-%adjacent(Lines, Columns, X, Y)
+%----------------------------------ADJACENT--------------------------------------------
+%Makes sure that the segment does not cross or touch itself
 adjacent(Lines, _, _, Y):- length(Lines, Y1),  Y1 #= Y - 1, ! .
 
 adjacent(Lines, Columns, X, Y):- 
@@ -110,9 +111,27 @@ adjacent(Lines, Columns, X, Y):-
     NewX is X+1,
     adjacent(Lines, Columns, NewX, Y).
 
+%----------------------------------CALCULATESIZE--------------------------------------------
+%Calculates the number of segments in the solution	
+calculateSize_aux(Lines, Ind, TmpSize, Size):-
+	length(Lines, NLines),
+	Ind #= NLines + 1, !, TmpSize #= Size .
 
+calculateSize_aux(Lines, Ind, TmpSize, Size):-
+	nth1(Ind, Lines, Line),
+	count(1, Line, #=, Amount), 
+	NewSize #= TmpSize + Amount,
+	Ind1 #= Ind + 1,
+	calculateSize_aux(Lines, Ind1, NewSize, Size).	
 	
+	
+calculateSize(Lines, Columns, Size):-
+	calculateSize_aux(Lines, 1, 0, LSize),
+	calculateSize_aux(Columns, 1, 0, CSize),
+	LSize + CSize #= Size .	
 
+%----------------------------------firstOne-------------------------------------------
+%Finds the first coordinates in the solution where a segment is drawn	
 firstOne_aux(Line, _X, X_aux):- 
 	length(Line, X1), X_aux #= X1 + 1,!, false.
 	
@@ -130,9 +149,12 @@ firstOne(Lines, Ind, [X , Y]):-
 	firstOne_aux(Line, X, 1),  Ind #= Y, ! .
 	
 firstOne(Lines, Ind, [X , Y]):-
-	%write(
 	Ind1 #= Ind + 1,
 	firstOne(Lines, Ind1, [X , Y]).	
+
+	
+%----------------------------------LOOP--------------------------------------------
+%This predicate is true in case Lines and Columns define a closed loop	
 
 
 nextVertice([X, Y], [Xant, Yant],[Xnext, Ynext], [_Left, Right, Up, Down]):-
@@ -159,22 +181,7 @@ nextVertice([X, Y], [Xant, Yant],[Xnext, Ynext], [Left, Right, Up, _Down]):-
 	(Left #= 1, Xnext #= X - 1, Ynext #= Y);
 	(Up #= 1, Ynext #= Y - 1, Xnext #= X)).	
 
-calculateSize_aux(Lines, Ind, TmpSize, Size):-
-	length(Lines, NLines),
-	Ind #= NLines + 1, !, TmpSize #= Size .
 
-calculateSize_aux(Lines, Ind, TmpSize, Size):-
-	nth1(Ind, Lines, Line),
-	count(1, Line, #=, Amount), 
-	NewSize #= TmpSize + Amount,
-	Ind1 #= Ind + 1,
-	calculateSize_aux(Lines, Ind1, NewSize, Size).	
-	
-	
-calculateSize(Lines, Columns, Size):-
-	calculateSize_aux(Lines, 1, 0, LSize),
-	calculateSize_aux(Columns, 1, 0, CSize),
-	LSize + CSize #= Size .
 		
 	
 loop(Lines, Columns, [[X, Y] | [[_Xant, _Yant] | Tail]]):-
@@ -190,20 +197,16 @@ loop(Lines, Columns, [[X, Y] | [[_Xant, _Yant] | Tail]]):-
 		
 	
 loop(Lines, Columns, [[X, Y] | [[Xant, Yant] | Tail]]):-
-	%write([X,Y]),nl,
 	length(Lines, NLines),
 	nth1(Y, Lines, Line), length(Line, NLine1), NLine #= NLine1 + 1,
 	
     (X < NLine, element(X, Line, Right); X = NLine, Right #= 0),
     (X >= 2, PrevX is X-1, element(PrevX, Line, Left); X=1, Left #= 0),
 
-    %checking columns (example matrix is 6x7)
     (Y < NLines, nth1(Y, Columns, ColsDn), element(X, ColsDn, Down); Y = NLines, Down #= 0),
     (Y >= 2, PrevY is Y-1, nth1(PrevY, Columns, ColsUp), element(X, ColsUp, Up); Y = 1, Up #= 0),
 
-    %restricting and continuing to process the matrix (go through dots horizontally)
     Left + Right + Up + Down #= 2,
-	%write(nextVertice([X, Y], [Xant, Yant], [Xnext, Ynext], [Left, Right, Up, Down])),
 	nextVertice([X, Y], [Xant, Yant], [Xnext, Ynext], [Left, Right, Up, Down]),
 	loop(Lines, Columns, [[Xnext, Ynext] | [[X, Y] | [[Xant, Yant] | Tail]]]).
 	
