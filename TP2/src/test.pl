@@ -24,7 +24,7 @@ debug_fence1:-
     solve_puzzle(7,7, Lines, Columns),
 	fd_statistics,
 	nl, write('Solution: '),nl,
-	display_puzzle(7, 7, Lines, Columns, 1).
+	display_puzzle(Lines, Columns,P,1, 1).
 	
 
 debug_fence2:-
@@ -47,7 +47,7 @@ debug_fence2:-
     solve_puzzle(7,7, Lines, Columns),
 	fd_statistics,
 	nl, write('Solution: '),nl,
-	display_puzzle(7, 7, Lines, Columns, 1).	
+	display_puzzle(Lines, Columns,P, 1, 1).	
 
 debug_fence3:-
 	abolish(cell/3),
@@ -59,5 +59,5 @@ debug_fence3:-
     solve_puzzle(4,2, Lines, Columns),
 	fd_statistics,
 	nl, write('Solution: '),nl, 
-	display_puzzle(4, 2, Lines, Columns, 1).
+	display_puzzle(Lines, Columns, P, 1, 1).
 	
